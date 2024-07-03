@@ -1,0 +1,81 @@
+﻿<Window
+    x:Class="ChatApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ChatApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:ChatApp.ViewModels"
+    x:Name="mainWindow"
+    Title="Chat App"
+    Width="1250"
+    Height="768"
+    AllowsTransparency="True"
+    Background="Transparent"
+    FontSize="15"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    WindowState="{Binding WindowState}"
+    WindowStyle="None"
+    mc:Ignorable="d">
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <!--  Structuring MainWindow  -->
+    <Border Background="WhiteSmoke" CornerRadius="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Title Bar  -->
+            <Border
+                Grid.ColumnSpan="3"
+                Background="#49A078"
+                CornerRadius="20 20 0 0"
+                MouseDown="Border_MouseDown">
+                <Grid>
+                    <TextBlock
+                        Margin="15,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="{Binding Title, ElementName=mainWindow}" />
+
+                    <!--  Window Button  -->
+                    <StackPanel
+                        Margin="10,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                        <Button
+                            x:Name="btnMinimize"
+                            Command="{Binding MinimizeCommand}"
+                            Content="{StaticResource minimize}"
+                            Style="{StaticResource IconButtonStyle}" />
+                        <Button
+                            x:Name="btnMaximize"
+                            Command="{Binding MaximizeCommand}"
+                            Content="{StaticResource maximize}"
+                            Style="{StaticResource IconButtonStyle}" />
+                        <Button
+                            x:Name="btnClose"
+                            Command="{Binding CloseCommand}"
+                            Content="{StaticResource close}"
+                            Foreground="DarkRed"
+                            Style="{StaticResource IconButtonStyle}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
