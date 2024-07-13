@@ -226,7 +226,7 @@
                     <!--  Conversation Header  -->
                     <RowDefinition Height="auto" />
 
-                    <!--  Body  -->
+                    <!--  Conversation Body  -->
                     <RowDefinition />
 
                     <!--  Reply popup  -->
@@ -236,6 +236,7 @@
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
 
+                <!--  Conversation Header  -->
                 <Grid
                     Height="75"
                     Margin="0,0,15,0"
@@ -284,6 +285,10 @@
                         Content="{StaticResource more}"
                         Style="{StaticResource ToggleIconButtonStyle}" />
                 </Grid>
+
+                <!--  Conversation Body  -->
+
+                <customcontrols:Conversation Grid.Row="1" />
             </Grid>
 
             <!--#endregion-->
