@@ -141,6 +141,8 @@ public class ViewModel : ObservableObject
 
     #endregion Chats List
 
+    #region Conversations
+
     public ViewModel()
     {
         LoadStatusThumbs();
