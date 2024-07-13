@@ -1,0 +1,147 @@
+﻿<UserControl
+    x:Class="ChatApp.CustomControls.StatusThumbs"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ChatApp.CustomControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+
+        <!--
+            Idea here is to have 2 Ellipse:
+            1) Outer Ellipse for Number of status Thickness dashes.
+            2) Inner Ellipse for Status Image
+            3) A small ellipse for profile photo of contact
+            
+            & A textblock for Contact Name
+        -->
+
+        <DataTemplate x:Key="thumbsTemplate" DataType="{x:Type Button}">
+            <!--  Ellipse  -->
+            <Grid Margin="4,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80" />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="0,0,8,8">
+                    <Ellipse
+                        x:Name="outerEllipse"
+                        Width="55"
+                        Height="55"
+                        VerticalAlignment="Center"
+                        Stretch="Uniform"
+                        Stroke="#49A078"
+                        StrokeDashArray="5"
+                        StrokeDashCap="Round"
+                        StrokeThickness="1" />
+
+                    <Ellipse
+                        x:Name="innerEllipse"
+                        Width="50"
+                        Height="50"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Stretch="Uniform">
+
+                        <!--  TODO Add Status Bindings  -->
+
+                        <!--
+                            If the IsMeAddStatus = false then show the status image inside ellipse &
+                            if it is true than fill the ellipse
+                        -->
+
+                        <Ellipse.Style>
+                            <Style TargetType="{x:Type Ellipse}">
+                                <Setter Property="Fill" Value="#49A078" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMeAddStatus}" Value="False">
+                                        <Setter Property="Fill">
+                                            <Setter.Value>
+                                                <ImageBrush ImageSource="{Binding StatusImage}" Stretch="UniformToFill" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+
+                    <!--  If the IsMeAddStatus = false then hide the Add Sign  -->
+
+                    <Path
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Data="{StaticResource addSign}"
+                        Fill="#DCE1DE">
+                        <Path.Style>
+                            <Style TargetType="{x:Type Path}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMeAddStatus}" Value="False">
+                                        <Setter Property="Visibility" Value="Hidden" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
+                    </Path>
+                </Grid>
+
+                <!--  Contact Profile Ellipse  -->
+                <Ellipse
+                    x:Name="contactPhotoEllipse"
+                    Width="26"
+                    Height="26"
+                    Margin="40,0,0,8"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Stretch="Uniform"
+                    Stroke="#DCE1DE"
+                    StrokeThickness="2">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{Binding ContactPhoto}" Stretch="Uniform" />
+                    </Ellipse.Fill>
+
+                    <!--  Also hide profile photo if the IsMeAddStatus = true  -->
+                    <Ellipse.Style>
+                        <Style TargetType="{x:Type Ellipse}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsMeAddStatus}" Value="True">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+
+                <!--  Contact Name  -->
+                <!--
+                    If ContactName is unspecified which can only happen in case
+                    if the Status is meant to be Add button here.
+                -->
+                <TextBlock
+                    Grid.Row="2"
+                    Text="{Binding ContactName, TargetNullValue=Add}"
+                    TextAlignment="Center"
+                    TextTrimming="CharacterEllipsis" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <ItemsControl
+        Margin="15,0"
+        ItemTemplate="{StaticResource thumbsTemplate}"
+        ItemsSource="{Binding StatusThumbsCollection, UpdateSourceTrigger=PropertyChanged}">
+        <ItemsControl.DataContext>
+            <viewmodels:ViewModel />
+        </ItemsControl.DataContext>
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+    </ItemsControl>
+</UserControl>

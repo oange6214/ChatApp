@@ -2,6 +2,7 @@
     x:Class="ChatApp.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customcontrols="clr-namespace:ChatApp.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ChatApp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -25,14 +26,22 @@
 
     <!--  Structuring MainWindow  -->
     <Border Background="WhiteSmoke" CornerRadius="20">
+
         <Grid>
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+
+                <!--  Column for Contact Chat List  -->
                 <ColumnDefinition Width="auto" />
+
+                <!--  Conversation Area  -->
                 <ColumnDefinition />
+
+                <!--  Profile Info  -->
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
 
@@ -76,6 +85,97 @@
                     </StackPanel>
                 </Grid>
             </Border>
+
+            <!--  Contact Chat List  -->
+            <Grid Grid.Row="1" MinWidth="406">
+
+                <Grid.RowDefinitions>
+
+                    <!--  Title & Search Options etc.  -->
+                    <RowDefinition Height="auto" />
+
+                    <!--  Status Thumbs  -->
+                    <RowDefinition Height="auto" />
+
+                    <!--  Status Thumbs  -->
+                    <RowDefinition Height="auto" />
+
+                    <!--  Chats List  -->
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <!--  Title & Search Options etc.  -->
+                <Grid Height="75" Margin="15,0">
+                    <Grid.ColumnDefinitions>
+
+                        <!--  Title  -->
+                        <ColumnDefinition Width="auto" />
+
+                        <!--  Blank  -->
+                        <ColumnDefinition />
+
+                        <!--  Search Button  -->
+                        <ColumnDefinition Width="40" />
+
+                        <!--  More Options Button  -->
+                        <ColumnDefinition Width="40" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="20"
+                        FontWeight="SemiBold"
+                        Text="Chats" />
+
+                    <!--  Search Button  -->
+                    <Button
+                        x:Name="ChatSearchButton"
+                        Grid.Column="2"
+                        Content="{StaticResource search}"
+                        Style="{StaticResource IconButtonStyle}" />
+
+                    <!--  More options Popup Menu  -->
+                    <ToggleButton
+                        x:Name="btnMoreOptions"
+                        Grid.Column="3"
+                        Content="{StaticResource more}"
+                        Style="{StaticResource ToggleIconButtonStyle}" />
+                </Grid>
+
+                <!--#region SearchBox-->
+                <!--  TODO: Add Search Box open/close and Hide/Unhide triggers  -->
+                <Border
+                    x:Name="searchBoxBorder"
+                    Grid.Row="1"
+                    Height="50"
+                    Margin="20"
+                    Background="#DCE1DE"
+                    CornerRadius="15"
+                    FocusManager.FocusedElement="{Binding ElementName=searchQuery}">
+
+                    <TextBox
+                        x:Name="searchQuery"
+                        Padding="12,0"
+                        VerticalAlignment="Stretch"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Text="Search Text" />
+                </Border>
+
+                <!--#endregion-->
+
+                <!--#region  Status Thumbnails-->
+                <customcontrols:StatusThumbs Grid.Row="2" />
+                <!--#endregion-->
+
+                <!--#region ChatList-->
+
+                <customcontrols:ChatList />
+
+                <!--#endregion-->
+            </Grid>
         </Grid>
     </Border>
 </Window>
