@@ -30,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Toolkit.Wpf.Mvvm\Toolkit.Wpf.Mvvm.csproj" />
   </ItemGroup>
 

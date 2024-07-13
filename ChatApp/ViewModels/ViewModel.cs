@@ -1,6 +1,12 @@
-﻿using ChatApp.Models;
+﻿using ChatApp.Helpers;
+using ChatApp.Models;
+using Microsoft.Data.SqlClient;
+using Microsoft.VisualBasic.ApplicationServices;
 using System.Collections.ObjectModel;
+using System.Data;
+using System.Diagnostics;
 using Toolkit.Wpf.Mvvm.ComponentModel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace ChatApp.ViewModels;
 
@@ -141,9 +147,73 @@ public class ViewModel : ObservableObject
 
     #endregion Chats List
 
+    #region Conversations
+
+    #region Fields
+
+    private ObservableCollection<ChatConversation> _conversations;
+
+    #endregion Fields
+
+    #region Properties
+
+    public ObservableCollection<ChatConversation> Conversations
+    {
+        get => _conversations;
+        set => SetProperty(ref _conversations, value);
+    }
+
+    #endregion Properties
+
+    #region Logics
+
+    private async Task LoadChatConversation()
+    {
+        string query = "SELECT * FROM conversations WHERE ContractName=@ContractName";
+        SqlParameter[] parameters =
+        {
+            SqlHelper.CreateParameter("@ContractName", "Mike", SqlDbType.NVarChar),
+        };
+
+        try
+        {
+            using SqlDataReader reader = await SqlHelper.ExecuteReaderAsync(query, parameters);
+
+            while (await reader.ReadAsync())
+            {
+                string MsgReceivedOn = !string.IsNullOrEmpty(reader["MsgReceivedOn"].ToString()) ?
+                    Convert.ToDateTime(reader["MsgReceivedOn"].ToString()).ToString("MMM dd, hh:mm tt") : string.Empty;
+
+                string MsgSentOn = !string.IsNullOrEmpty(reader["MsgSentOn"].ToString()) ?
+                    Convert.ToDateTime(reader["MsgSentOn"].ToString()).ToString("MMM dd, hh:mm tt") : string.Empty;
+
+                var conversation = new ChatConversation()
+                {
+                    ContactName = reader["ContactName"].ToString(),
+                    ReceivedMessage = reader["ReceivedMsgs"].ToString(),
+                    MsgReceivedOn = reader["MsgReceivedOn"].ToString(),
+                    SentMessage = reader["SentMsgs"].ToString(),
+                    MsgSentOn = reader["MsgSentOn"].ToString(),
+                    IsMessageReceived = !string.IsNullOrEmpty(reader["ReceivedMsgs"].ToString())
+                };
+
+                Conversations.Add(conversation);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error loading chat conversations: {ex.Message}");
+        }
+    }
+
+    #endregion Logics
+
+    #endregion Conversations
+
     public ViewModel()
     {
         LoadStatusThumbs();
         LoadChats();
+        Task.Run(async () => LoadChatConversation().Wait());
     }
 }
