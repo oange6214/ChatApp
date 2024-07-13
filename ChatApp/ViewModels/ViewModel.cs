@@ -6,6 +6,18 @@ namespace ChatApp.ViewModels;
 
 public class ViewModel : ObservableObject
 {
+    #region MainWindow
+
+    #region Properties
+
+    public string ContactName { get; set; }
+    public Uri ContactPhoto { get; set; }
+    public string LastSeen { get; set; }
+
+    #endregion Properties
+
+    #endregion MainWindow
+
     #region Status Thumbs
 
     #region Fields

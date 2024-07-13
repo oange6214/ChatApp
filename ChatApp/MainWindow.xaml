@@ -23,6 +23,47 @@
         <vm:MainViewModel />
     </Window.DataContext>
 
+    <Window.Resources>
+        <Style x:Key="ContactInfoButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+
+        <ControlTemplate x:Key="ContactInfoButtonTemplate" TargetType="{x:Type Button}">
+            <Border
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <!--  Profile photo  -->
+                        <ColumnDefinition Width="75" />
+
+                        <!--  Name & Online status  -->
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Ellipse Width="40" Height="40">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding ContactPhoto, FallbackValue={StaticResource DefaultImage}, TargetNullValue={StaticResource DefaultImage}, UpdateSourceTrigger=PropertyChanged}" Stretch="UniformToFill" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+
+                    <Grid Grid.Column="1">
+
+                        <TextBlock>
+                            <!--  Name  --><Run
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Text="{Binding ContactName, FallbackValue=Contact Name, TargetNullValue=Contact Name, UpdateSourceTrigger=PropertyChanged}" /><LineBreak />
+                            <!--  Online Status  --><Run FontSize="15" Text="{Binding LastSeen, FallbackValue=Last Seen, TargetNullValue=Last Seen, UpdateSourceTrigger=PropertyChanged}" /></TextBlock>
+                    </Grid>
+                </Grid>
+            </Border>
+        </ControlTemplate>
+    </Window.Resources>
+
     <!--  Structuring MainWindow  -->
     <Border Background="WhiteSmoke" CornerRadius="20">
 
@@ -177,6 +218,75 @@
 
                 <!--#endregion-->
             </Grid>
+
+            <!--#region Conversation Screen-->
+
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <!--  Conversation Header  -->
+                    <RowDefinition Height="auto" />
+
+                    <!--  Body  -->
+                    <RowDefinition />
+
+                    <!--  Reply popup  -->
+                    <RowDefinition Height="auto" />
+
+                    <!--  Send Message box  -->
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <Grid
+                    Height="75"
+                    Margin="0,0,15,0"
+                    VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <!--  Contact Header Name & Online Status  -->
+                        <ColumnDefinition />
+
+                        <!--  Video Call Button  -->
+                        <ColumnDefinition Width="50" />
+
+                        <!--  Call Button  -->
+                        <ColumnDefinition Width="50" />
+
+                        <!--  Search Message Button  -->
+                        <ColumnDefinition Width="50" />
+
+                        <!--  More Options  -->
+                        <ColumnDefinition Width="50" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Contact  Info Button  -->
+                    <Button Style="{StaticResource ContactInfoButtonStyle}" Template="{StaticResource ContactInfoButtonTemplate}" />
+
+                    <!--  Video Call Button  -->
+                    <Button
+                        Grid.Column="1"
+                        Content="{StaticResource videocall}"
+                        Style="{StaticResource IconButtonStyle}" />
+
+                    <!--  Call Button  -->
+                    <Button
+                        Grid.Column="2"
+                        Content="{StaticResource call}"
+                        Style="{StaticResource IconButtonStyle}" />
+
+                    <!--  Search Message Button  -->
+                    <Button
+                        Grid.Column="3"
+                        Content="{StaticResource search}"
+                        Style="{StaticResource IconButtonStyle}" />
+
+                    <!--  More Options Button  -->
+                    <ToggleButton
+                        Grid.Column="4"
+                        Content="{StaticResource more}"
+                        Style="{StaticResource ToggleIconButtonStyle}" />
+                </Grid>
+            </Grid>
+
+            <!--#endregion-->
         </Grid>
     </Border>
 </Window>
