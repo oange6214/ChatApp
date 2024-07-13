@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customcontrols="clr-namespace:ChatApp.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:ChatApp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:ChatApp.ViewModels"
     x:Name="mainWindow"
@@ -167,12 +166,14 @@
                 <!--#endregion-->
 
                 <!--#region  Status Thumbnails-->
+
                 <customcontrols:StatusThumbs Grid.Row="2" />
+
                 <!--#endregion-->
 
                 <!--#region ChatList-->
 
-                <customcontrols:ChatList />
+                <customcontrols:ChatList Grid.Row="3" VerticalAlignment="Top" />
 
                 <!--#endregion-->
             </Grid>

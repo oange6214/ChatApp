@@ -1,5 +1,4 @@
-﻿using ChatApp.ViewModels;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace ChatApp.CustomControls;
 

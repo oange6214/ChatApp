@@ -6,20 +6,178 @@
     xmlns:local="clr-namespace:ChatApp.CustomControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    MinWidth="406"
     mc:Ignorable="d">
 
-    <Grid>
-        <!--  In this usercontrol we will list our Contact chats list  -->
+    <UserControl.Resources>
+        <DataTemplate x:Key="ChatButtonItemTemplate">
+            <RadioButton GroupName="ChatButton">
+                <RadioButton.Style>
+                    <Style TargetType="{x:Type ToggleButton}">
+                        <Setter Property="SnapsToDevicePixels" Value="True" />
+                        <Setter Property="MinHeight" Value="80" />
+                        <Setter Property="Padding" Value="10" />
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Content" Value="{Binding ContactName}" />
+                        <!--<Setter Property="IsChecked" Value="{Binding ChatIsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                    <Border
+                                        x:Name="border"
+                                        Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="20"
+                                        SnapsToDevicePixels="True">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <!--  Will Contain contactname, photo, message, message time  -->
+                                                <RowDefinition Height="auto" />
 
-        <StackPanel>
-            <ItemsControl ItemsSource="{Binding}">
-                <ItemsControl.DataContext>
-                    <viewmodels:ViewModel />
-                </ItemsControl.DataContext>
-            </ItemsControl>
-        </StackPanel>
+                                                <!--  Will contain options such as archive chat, pin chat, delete etc.  -->
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
 
-    </Grid>
+                                            <!--#region Contact details-->
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <!--  Profile Photo  -->
+                                                    <ColumnDefinition Width="auto" />
+
+                                                    <!--  Contact Name & Message  -->
+                                                    <ColumnDefinition />
+
+                                                    <!--  Last Message Time  -->
+                                                    <ColumnDefinition Width="auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!--  Profile Photo  -->
+                                                <Ellipse Width="50" Height="50">
+                                                    <Ellipse.Fill>
+                                                        <ImageBrush ImageSource="{Binding ContactPhoto, TargetNullValue={StaticResource DefaultImage}, FallbackValue={StaticResource DefaultImage}, UpdateSourceTrigger=PropertyChanged}" Stretch="UniformToFill" />
+                                                    </Ellipse.Fill>
+                                                </Ellipse>
+
+                                                <!--#region Contact Name & Message-->
+
+                                                <Grid Grid.Column="1" Margin="20,0">
+                                                    <Grid.RowDefinitions>
+                                                        <!--  Name  -->
+                                                        <RowDefinition />
+
+                                                        <!--  Message  -->
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+
+                                                    <TextBlock FontSize="16" Text="{Binding ContactName}">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="{x:Type TextBlock}">
+                                                                <Setter Property="FontWeight" Value="SemiBold" />
+
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="True">
+                                                                        <Setter Property="FontWeight" Value="Bold" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+
+                                                    <TextBlock Grid.Row="1" Text="{Binding Message}">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="{x:Type TextBlock}">
+                                                                <Setter Property="FontWeight" Value="Normal" />
+
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="True">
+                                                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Grid>
+
+                                                <!--#endregion-->
+
+                                                <!--  Last Message Time  -->
+                                                <Grid Grid.Column="2">
+                                                    <TextBlock HorizontalAlignment="Right" Text="{Binding LastMessageTime}" />
+                                                </Grid>
+
+                                                <Separator
+                                                    Grid.Column="1"
+                                                    Grid.ColumnSpan="2"
+                                                    VerticalAlignment="Bottom"
+                                                    BorderBrush="LightGray"
+                                                    BorderThickness=".5" />
+                                            </Grid>
+                                            <!--#endregion-->
+
+                                            <!--#region Options-->
+                                            <!--  Height is 0 because we are going to show it on Chat Button checked event only  -->
+                                            <!--  TODO: Animation later  -->
+
+                                            <Grid Grid.Row="1" Height="auto">
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50" />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!--  Option Button  -->
+                                                <UniformGrid Grid.Column="1" Columns="4">
+                                                    <Button Content="{StaticResource pinned}" Style="{StaticResource IconButtonStyle}" />
+                                                    <Button Content="{StaticResource archive}" Style="{StaticResource IconButtonStyle}" />
+                                                    <Button Content="{StaticResource mute}" Style="{StaticResource IconButtonStyle}" />
+                                                    <Button Content="{StaticResource trash}" Style="{StaticResource IconButtonStyle}" />
+                                                </UniformGrid>
+                                            </Grid>
+
+                                            <!--#endregion-->
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </RadioButton.Style>
+            </RadioButton>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <!--  TODO: scollviewer style  -->
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="25,15">
+            <!--  In this usercontrol we will list our Contact chats list  -->
+
+            <!--  Title  -->
+            <StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{StaticResource allchats}" Fill="Black" />
+
+                    <TextBlock
+                        Margin="10,0"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Text="All Chats" />
+                </StackPanel>
+
+                <ItemsControl
+                    Padding="15,0"
+                    ItemTemplate="{StaticResource ChatButtonItemTemplate}"
+                    ItemsSource="{Binding Chats}">
+                    <ItemsControl.DataContext>
+                        <viewmodels:ViewModel />
+                    </ItemsControl.DataContext>
+                </ItemsControl>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </UserControl>
