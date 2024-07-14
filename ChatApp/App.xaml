@@ -10,6 +10,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Assets/Images/Icons.xaml" />
                 <ResourceDictionary Source="Assets/Styles/BtnWithIcon.xaml" />
+                <ResourceDictionary Source="Assets/Styles/ScrollStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -213,6 +213,7 @@ public class ViewModel : ObservableObject
     #region Fields
 
     private ObservableCollection<ChatConversation> _conversations;
+    private string _messageText;
 
     #endregion Fields
 
@@ -222,6 +223,12 @@ public class ViewModel : ObservableObject
     {
         get => _conversations;
         set => SetProperty(ref _conversations, value);
+    }
+
+    public string MessageText
+    {
+        get => _messageText;
+        set => SetProperty(ref _messageText, value);
     }
 
     #endregion Properties

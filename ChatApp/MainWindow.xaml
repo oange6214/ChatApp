@@ -292,11 +292,67 @@
                 </Grid>
 
                 <!--  Conversation Body  -->
-
                 <customcontrols:Conversation Grid.Row="1" />
+
+                <!--#region Textbox to send message-->
+
+                <Grid Grid.Row="3">
+                    <Border
+                        Height="50"
+                        Margin="15,8"
+                        Background="#DCE1DE"
+                        CornerRadius="15">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <!--  Textbox Button  -->
+                                <ColumnDefinition />
+
+                                <!--  Attachment Button & Send Message Button  -->
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!--  Textbox Button  -->
+                            <TextBox
+                                x:Name="MessageBox"
+                                Padding="12,0"
+                                VerticalAlignment="Stretch"
+                                VerticalContentAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Text="{Binding MessageText}">
+                                <!--  TODO: Input Bindings  -->
+                            </TextBox>
+
+                            <!--  Attachment Button & Send Message Button  -->
+                            <StackPanel
+                                Grid.Row="1"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                                <!--  TODO: Commands  -->
+
+                                <Button
+                                    x:Name="AttachButton"
+                                    Content="{StaticResource attach}"
+                                    Style="{StaticResource IconButtonStyle}" />
+                                <Button
+                                    x:Name="SendMsgButton"
+                                    Content="{StaticResource send}"
+                                    Style="{StaticResource IconButtonStyle}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!--#endregion-->
             </Grid>
 
             <!--#endregion-->
+
+            <!--  Contact Info  -->
+            <customcontrols:ContactInfo
+                x:Name="ContactInfoScreen"
+                Grid.Row="1"
+                Grid.Column="2" />
         </Grid>
     </Border>
 </Window>
