@@ -1,12 +1,13 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using ChatApp.Models;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Diagnostics;
 
 namespace ChatApp.Helpers;
 
-public static class SqlHelper
+public class SqlHelper
 {
-    private static readonly string ConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=\Database\Database1.mdf;Integrated Security=True";
+    private static readonly string ConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\Workspaces\Devolops\WPFs\ChatApp\ChatApp\Database\Database1.mdf;Integrated Security=True";
 
     private static readonly SqlConnectionStringBuilder SqlConnectionStringBuilder = new SqlConnectionStringBuilder(ConnectionString)
     {
@@ -58,6 +59,7 @@ public static class SqlHelper
             using SqlCommand command = new(query, connection);
 
             command.Parameters.AddRange(parameters);
+
             return await command.ExecuteScalarAsync();
         }
         catch (SqlException ex)
@@ -78,7 +80,7 @@ public static class SqlHelper
     /// <param name="query"></param>
     /// <param name="parameters"></param>
     /// <returns></returns>
-    public static async Task<SqlDataReader> ExecuteReaderAsync(string query, params SqlParameter[] parameters)
+    public static async Task ExecuteReaderAsync(string query, Action<DataEventArgs> onDataReceived, params SqlParameter[] parameters)
     {
         try
         {
@@ -87,7 +89,23 @@ public static class SqlHelper
             using SqlCommand command = new(query, connection);
 
             command.Parameters.AddRange(parameters);
-            return await command.ExecuteReaderAsync(CommandBehavior.CloseConnection); // Ensures that the connection is closed when the reader is closed
+
+            using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection);
+
+            while (await reader.ReadAsync())
+            {
+                var data = new
+                {
+                    ContactName = reader["ContactName"].ToString(),
+                    ReceivedMessage = reader["ReceivedMsgs"].ToString(),
+                    MsgReceivedOn = reader["MsgReceivedOn"].ToString(),
+                    SentMessage = reader["SentMsgs"].ToString(),
+                    MsgSentOn = reader["MsgSentOn"].ToString(),
+                    IsMessageReceived = !string.IsNullOrEmpty(reader["ReceivedMsgs"].ToString())
+                };
+
+                onDataReceived?.Invoke(new DataEventArgs { Data = data });
+            }
         }
         catch (SqlException ex)
         {

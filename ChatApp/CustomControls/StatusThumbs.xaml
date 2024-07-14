@@ -1,9 +1,10 @@
 ﻿<UserControl
     x:Class="ChatApp.CustomControls.StatusThumbs"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:ChatApp.Models"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     mc:Ignorable="d">
 
@@ -20,7 +21,7 @@
 
         <DataTemplate x:Key="thumbsTemplate" DataType="{x:Type Button}">
             <!--  Ellipse  -->
-            <Grid Margin="4,0">
+            <Grid Margin="4,0" d:DataContext="{d:DesignInstance models:StatusDataModel}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80" />
                     <RowDefinition />

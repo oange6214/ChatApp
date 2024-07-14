@@ -1,12 +1,11 @@
 ﻿using ChatApp.Helpers;
 using ChatApp.Models;
 using Microsoft.Data.SqlClient;
-using Microsoft.VisualBasic.ApplicationServices;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
+using System.Windows;
 using Toolkit.Wpf.Mvvm.ComponentModel;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace ChatApp.ViewModels;
 
@@ -169,36 +168,33 @@ public class ViewModel : ObservableObject
 
     private async Task LoadChatConversation()
     {
-        string query = "SELECT * FROM conversations WHERE ContractName=@ContractName";
+        Conversations ??= [];
+
+        string query = "SELECT * FROM conversations WHERE ContactName=@ContactName";
+
         SqlParameter[] parameters =
         {
-            SqlHelper.CreateParameter("@ContractName", "Mike", SqlDbType.NVarChar),
+            SqlHelper.CreateParameter("@ContactName", "Mike", SqlDbType.NVarChar),
         };
 
         try
         {
-            using SqlDataReader reader = await SqlHelper.ExecuteReaderAsync(query, parameters);
-
-            while (await reader.ReadAsync())
+            await SqlHelper.ExecuteReaderAsync(query, (args) =>
             {
-                string MsgReceivedOn = !string.IsNullOrEmpty(reader["MsgReceivedOn"].ToString()) ?
-                    Convert.ToDateTime(reader["MsgReceivedOn"].ToString()).ToString("MMM dd, hh:mm tt") : string.Empty;
+                var data = args.Data as dynamic;
 
-                string MsgSentOn = !string.IsNullOrEmpty(reader["MsgSentOn"].ToString()) ?
-                    Convert.ToDateTime(reader["MsgSentOn"].ToString()).ToString("MMM dd, hh:mm tt") : string.Empty;
-
-                var conversation = new ChatConversation()
+                ChatConversation conversation = new()
                 {
-                    ContactName = reader["ContactName"].ToString(),
-                    ReceivedMessage = reader["ReceivedMsgs"].ToString(),
-                    MsgReceivedOn = reader["MsgReceivedOn"].ToString(),
-                    SentMessage = reader["SentMsgs"].ToString(),
-                    MsgSentOn = reader["MsgSentOn"].ToString(),
-                    IsMessageReceived = !string.IsNullOrEmpty(reader["ReceivedMsgs"].ToString())
+                    ContactName = data.ContactName,
+                    ReceivedMessage = data.ReceivedMessage,
+                    MsgReceivedOn = data.MsgReceivedOn,
+                    SentMessage = data.SentMessage,
+                    MsgSentOn = data.MsgSentOn,
+                    IsMessageReceived = data.IsMessageReceived
                 };
 
-                Conversations.Add(conversation);
-            }
+                Application.Current.Dispatcher.Invoke(() => Conversations.Add(conversation));
+            }, parameters);
         }
         catch (Exception ex)
         {
@@ -214,6 +210,7 @@ public class ViewModel : ObservableObject
     {
         LoadStatusThumbs();
         LoadChats();
-        Task.Run(async () => LoadChatConversation().Wait());
+
+        Task.Factory.StartNew(LoadChatConversation);
     }
 }
