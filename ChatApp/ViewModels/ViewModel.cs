@@ -117,28 +117,28 @@ public class ViewModel : ObservableObject
                 {
                     ContactName = "Mike",
                     ContactPhoto = new Uri("/Assets/Images/1.png", UriKind.RelativeOrAbsolute),
-                    StatusImage = new Uri("/Assets/Images/5.jpg", UriKind.RelativeOrAbsolute),
+                    StatusImage = new Uri("/Assets/Images/8.jpg", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
                 new StatusDataModel
                 {
                     ContactName = "Steve",
                     ContactPhoto = new Uri("/Assets/Images/2.jpg", UriKind.RelativeOrAbsolute),
-                    StatusImage = new Uri("/Assets/Images/8.jpg", UriKind.RelativeOrAbsolute),
+                    StatusImage = new Uri("/Assets/Images/7.png", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
                 new StatusDataModel
                 {
                     ContactName = "Will",
                     ContactPhoto = new Uri("/Assets/Images/3.jpg", UriKind.RelativeOrAbsolute),
-                    StatusImage = new Uri("/Assets/Images/5.jpg", UriKind.RelativeOrAbsolute),
+                    StatusImage = new Uri("/Assets/Images/6.jpg", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
                 new StatusDataModel
                 {
                     ContactName = "John",
                     ContactPhoto = new Uri("/Assets/Images/4.jpg", UriKind.RelativeOrAbsolute),
-                    StatusImage = new Uri("/Assets/Images/3.jpg", UriKind.RelativeOrAbsolute),
+                    StatusImage = new Uri("/Assets/Images/5.jpg", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
             ];
@@ -161,8 +161,20 @@ public class ViewModel : ObservableObject
     public ObservableCollection<ChatListData> Chats
     {
         get => _chats;
-        set => SetProperty(ref _chats, value);
+        set
+        {
+            if (SetProperty(ref _chats, value))
+            {
+                // Updating filtered chats to match
+                FilterdChats = new ObservableCollection<ChatListData>(_chats);
+            }
+        }
     }
+
+    // Filtering Chats & Pinned Chats
+    public ObservableCollection<ChatListData> FilterdChats { get; set; }
+
+    public ObservableCollection<ChatListData> FilterdPinnedChats { get; set; }
 
     #endregion Properties
 

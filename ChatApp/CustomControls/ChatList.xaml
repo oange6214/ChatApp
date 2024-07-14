@@ -154,14 +154,14 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <!--  TODO: scollviewer style  -->
+    <!--  TODO: Scroll Bar style  -->
     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
         <Grid Margin="25,15">
             <!--  In this usercontrol we will list our Contact chats list  -->
 
-            <!--  Title  -->
             <StackPanel>
 
+                <!--  Title  -->
                 <StackPanel Orientation="Horizontal">
                     <Path Data="{StaticResource allchats}" Fill="Black" />
 
@@ -172,11 +172,13 @@
                         Text="All Chats" />
                 </StackPanel>
 
+                <!--  Chat List  -->
+                <!--  Since we want to show filtered chats on search  -->
                 <ItemsControl
                     x:Name="_Chats"
                     Padding="15,0"
                     ItemTemplate="{StaticResource ChatButtonItemTemplate}"
-                    ItemsSource="{Binding Chats}" />
+                    ItemsSource="{Binding FilterdChats}" />
             </StackPanel>
         </Grid>
     </ScrollViewer>

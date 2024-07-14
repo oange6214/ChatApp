@@ -16,13 +16,13 @@
             1) Outer Ellipse for Number of status Thickness dashes.
             2) Inner Ellipse for Status Image
             3) A small ellipse for profile photo of contact
-
+            
             & A textblock for Contact Name
         -->
 
-        <DataTemplate x:Key="thumbsTemplate" DataType="{x:Type Button}">
+        <DataTemplate x:Key="ThumbsTemplate" DataType="{x:Type Button}">
             <!--  Ellipse  -->
-            <Grid Margin="4,0" d:DataContext="{d:DesignInstance models:StatusDataModel}">
+            <Grid Margin="4,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80" />
                     <RowDefinition />
@@ -102,6 +102,7 @@
                     Stretch="Uniform"
                     Stroke="#DCE1DE"
                     StrokeThickness="2">
+
                     <Ellipse.Fill>
                         <ImageBrush ImageSource="{Binding ContactPhoto}" Stretch="UniformToFill" />
                     </Ellipse.Fill>
@@ -134,7 +135,7 @@
 
     <ItemsControl
         Margin="15,0"
-        ItemTemplate="{StaticResource thumbsTemplate}"
+        ItemTemplate="{StaticResource ThumbsTemplate}"
         ItemsSource="{Binding StatusThumbsCollection, UpdateSourceTrigger=PropertyChanged}">
 
         <ItemsControl.ItemsPanel>
