@@ -21,7 +21,7 @@
     mc:Ignorable="d">
 
     <Window.DataContext>
-        <vm:MainViewModel />
+        <vm:ViewModel />
     </Window.DataContext>
 
     <Window.Resources>
@@ -33,12 +33,11 @@
 
         <ControlTemplate x:Key="ContactInfoButtonTemplate" TargetType="{x:Type Button}">
             <Border
-                d:DataContext="{d:DesignInstance models:ChatListData}"
                 Background="{TemplateBinding Background}"
                 BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="{TemplateBinding BorderThickness}">
-                <Grid VerticalAlignment="Center">
 
+                <Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <!--  Profile photo  -->
                         <ColumnDefinition Width="75" />
@@ -54,15 +53,16 @@
                     </Ellipse>
 
                     <Grid Grid.Column="1">
-
                         <TextBlock>
                             <!--  Name  -->
                             <Run
                                 FontSize="20"
                                 FontWeight="Bold"
-                                Text="{Binding ContactName, FallbackValue='Contact Name', TargetNullValue='Contact Name', UpdateSourceTrigger=PropertyChanged}" /><LineBreak />
+                                Text="{Binding ContactName, FallbackValue='Contact Name', TargetNullValue='Contact Name', UpdateSourceTrigger=PropertyChanged}" />
+                            <LineBreak />
                             <!--  Online Status  -->
-                            <Run FontSize="15" Text="{Binding LastSeen, FallbackValue='Last Seen', TargetNullValue='Last Seen', UpdateSourceTrigger=PropertyChanged}" /></TextBlock>
+                            <Run FontSize="15" Text="{Binding LastSeen, FallbackValue='Last Seen', TargetNullValue='Last Seen', UpdateSourceTrigger=PropertyChanged}" />
+                        </TextBlock>
                     </Grid>
                 </Grid>
             </Border>

@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     MinWidth="406"
+    d:DataContext="{d:DesignInstance viewmodels:ViewModel}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -20,7 +21,7 @@
                         <Setter Property="VerticalAlignment" Value="Center" />
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="BorderThickness" Value="0" />
-                        <Setter Property="Command" Value="{Binding}" />
+                        <Setter Property="Command" Value="{Binding DataContext.GetSelectedChatCommand, ElementName=_Chats, UpdateSourceTrigger=PropertyChanged}" />
                         <Setter Property="CommandParameter" Value="{Binding}" />
                         <Setter Property="Content" Value="{Binding ContactName}" />
 
@@ -172,13 +173,10 @@
                 </StackPanel>
 
                 <ItemsControl
+                    x:Name="_Chats"
                     Padding="15,0"
                     ItemTemplate="{StaticResource ChatButtonItemTemplate}"
-                    ItemsSource="{Binding Chats}">
-                    <ItemsControl.DataContext>
-                        <viewmodels:ViewModel />
-                    </ItemsControl.DataContext>
-                </ItemsControl>
+                    ItemsSource="{Binding Chats}" />
             </StackPanel>
         </Grid>
     </ScrollViewer>

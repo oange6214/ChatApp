@@ -10,10 +10,6 @@
     d:DataContext="{d:DesignInstance viewmodels:ViewModel}"
     mc:Ignorable="d">
 
-    <UserControl.DataContext>
-        <viewmodels:ViewModel />
-    </UserControl.DataContext>
-
     <UserControl.Resources>
         <Style x:Key="MessageTextStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="FontSize" Value="15" />
@@ -213,6 +209,7 @@
             Grid.Row="1"
             Background="WhiteSmoke"
             HorizontalScrollBarVisibility="Disabled">
+
             <ItemsControl
                 Margin="15,0,0,0"
                 ItemTemplate="{StaticResource ItemTemplate}"

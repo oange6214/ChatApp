@@ -6,6 +6,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Windows;
 using Toolkit.Wpf.Mvvm.ComponentModel;
+using Toolkit.Wpf.Mvvm.Input;
 
 namespace ChatApp.ViewModels;
 
@@ -13,13 +14,74 @@ public class ViewModel : ObservableObject
 {
     #region MainWindow
 
+    #region Fields
+
+    private string _contactName;
+    private Uri _contactPhoto;
+    private string _lastSeen;
+    private WindowState _windowState;
+
+    #endregion Fields
+
     #region Properties
 
-    public string ContactName { get; set; }
-    public Uri ContactPhoto { get; set; }
-    public string LastSeen { get; set; }
+    public string ContactName
+    {
+        get => _contactName;
+        set => SetProperty(ref _contactName, value);
+    }
+
+    public Uri ContactPhoto
+    {
+        get => _contactPhoto;
+        set => SetProperty(ref _contactPhoto, value);
+    }
+
+    public string LastSeen
+    {
+        get => _lastSeen;
+        set => SetProperty(ref _lastSeen, value);
+    }
+
+    public WindowState WindowState
+    {
+        get => _windowState;
+        set => SetProperty(ref _windowState, value);
+    }
 
     #endregion Properties
+
+    #region Commands
+
+    public IRelayCommand CloseCommand => new RelayCommand(Close);
+
+    public IRelayCommand MaximizeCommand => new RelayCommand(Maximize);
+
+    public IRelayCommand MinimizeCommand => new RelayCommand(Minimize);
+
+    private void Close()
+    {
+        Application.Current.Shutdown();
+    }
+
+    private void Maximize()
+    {
+        if (WindowState == WindowState.Normal)
+        {
+            WindowState = WindowState.Maximized;
+        }
+        else
+        {
+            WindowState = WindowState.Normal;
+        }
+    }
+
+    private void Minimize()
+    {
+        WindowState = WindowState.Minimized;
+    }
+
+    #endregion Commands
 
     #endregion MainWindow
 
@@ -203,6 +265,26 @@ public class ViewModel : ObservableObject
     }
 
     #endregion Logics
+
+    #region Commands
+
+    //To get the ContactName of selected chat so that we can open corresponding conversation
+
+    private IRelayCommand _getSelectedChatCommand;
+
+    public IRelayCommand GetSelectedChatCommand => _getSelectedChatCommand ?? new RelayCommand<ChatListData>(data =>
+    {
+        if (data == null)
+            return;
+
+        //Getting ContactName from selected chat
+        ContactName = data.ContactName;
+
+        //Getting ContactPhoto from selected chat
+        ContactPhoto = data.ContactPhoto;
+    });
+
+    #endregion Commands
 
     #endregion Conversations
 
