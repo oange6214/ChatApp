@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
+    x:Name="_Chats"
     MinWidth="406"
     d:DataContext="{d:DesignInstance viewmodels:ViewModel}"
     mc:Ignorable="d">
@@ -135,8 +136,46 @@
 
                                                 <!--  Option Button  -->
                                                 <UniformGrid Grid.Column="1" Columns="4">
-                                                    <Button Content="{StaticResource pinned}" Style="{StaticResource IconButtonStyle}" />
-                                                    <Button Content="{StaticResource archive}" Style="{StaticResource IconButtonStyle}" />
+                                                    <Button CommandParameter="{Binding}">
+
+                                                        <!--  To show UnPin icon and Command to unpint when the chat i pinned.  -->
+                                                        <Button.Style>
+                                                            <Style BasedOn="{StaticResource IconButtonStyle}" TargetType="{x:Type Button}">
+                                                                <!--  Normal Unpinned Chat Style  -->
+                                                                <Setter Property="Content" Value="{StaticResource pinned}" />
+                                                                <Setter Property="Command" Value="{Binding DataContext.PinChatCommand, ElementName=_Chats}" />
+
+                                                                <!--  Style when Chat is pinned  -->
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding ChatIsPinned}" Value="True">
+                                                                        <Setter Property="Content" Value="{StaticResource unpin}" />
+                                                                        <Setter Property="Command" Value="{Binding DataContext.UnPinChatCommand, ElementName=_Chats}" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+
+                                                    <Button CommandParameter="{Binding}">
+
+                                                        <!--  To show Unarchive icon and Command to unarchive when the chat i pinned or unpinned.  -->
+                                                        <Button.Style>
+                                                            <Style BasedOn="{StaticResource IconButtonStyle}" TargetType="{x:Type Button}">
+                                                                <!--  Normal Chat Style  -->
+                                                                <Setter Property="Content" Value="{StaticResource archive}" />
+                                                                <Setter Property="Command" Value="{Binding DataContext.ArchiveChatCommand, ElementName=_Chats}" />
+
+                                                                <!--  Style when Chat is pinned  -->
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding ChatIsPinned}" Value="True">
+                                                                        <Setter Property="Content" Value="{StaticResource unarchive}" />
+                                                                        <Setter Property="Command" Value="{Binding DataContext.UnArchiveChatCommand, ElementName=_Chats}" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+
                                                     <Button Content="{StaticResource mute}" Style="{StaticResource IconButtonStyle}" />
                                                     <Button Content="{StaticResource trash}" Style="{StaticResource IconButtonStyle}" />
                                                 </UniformGrid>
@@ -162,6 +201,30 @@
             <StackPanel>
 
                 <!--  Title  -->
+                <!--  Pinned Chats  -->
+                <StackPanel Orientation="Horizontal">
+                    <Path
+                        Data="{StaticResource pinned}"
+                        Fill="Black"
+                        Stroke="Black"
+                        StrokeThickness="1" />
+
+                    <TextBlock
+                        Margin="10,0"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Text="Pinned" />
+                </StackPanel>
+
+                <!--  Chat List  -->
+                <!--  Since we want to show filtered chats on search  -->
+                <ItemsControl
+                    Padding="15,0"
+                    ItemTemplate="{StaticResource ChatButtonItemTemplate}"
+                    ItemsSource="{Binding FilteredPinnedChats}" />
+
+                <!--  All Chats  -->
+                <!--  Title  -->
                 <StackPanel Orientation="Horizontal">
                     <Path Data="{StaticResource allchats}" Fill="Black" />
 
@@ -175,10 +238,9 @@
                 <!--  Chat List  -->
                 <!--  Since we want to show filtered chats on search  -->
                 <ItemsControl
-                    x:Name="_Chats"
                     Padding="15,0"
                     ItemTemplate="{StaticResource ChatButtonItemTemplate}"
-                    ItemsSource="{Binding FilterdChats}" />
+                    ItemsSource="{Binding FilteredChats}" />
             </StackPanel>
         </Grid>
     </ScrollViewer>

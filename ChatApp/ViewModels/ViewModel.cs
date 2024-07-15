@@ -152,7 +152,8 @@ public class ViewModel : ObservableObject
 
     #region Fields
 
-    private ObservableCollection<ChatListData> _chats;
+    private ObservableCollection<ChatListData> _chats = [];
+    private ObservableCollection<ChatListData> _pinnedChats = [];
 
     #endregion Fields
 
@@ -166,15 +167,28 @@ public class ViewModel : ObservableObject
             if (SetProperty(ref _chats, value))
             {
                 // Updating filtered chats to match
-                FilterdChats = new ObservableCollection<ChatListData>(_chats);
+                FilteredChats = new ObservableCollection<ChatListData>(_chats);
+            }
+        }
+    }
+
+    public ObservableCollection<ChatListData> PinnedChats
+    {
+        get => _pinnedChats;
+        set
+        {
+            if (SetProperty(ref _pinnedChats, value))
+            {
+                // Updating filtered chats to match
+                FilteredPinnedChats = new ObservableCollection<ChatListData>(_pinnedChats);
             }
         }
     }
 
     // Filtering Chats & Pinned Chats
-    public ObservableCollection<ChatListData> FilterdChats { get; set; }
+    public ObservableCollection<ChatListData> FilteredChats { get; set; } = [];
 
-    public ObservableCollection<ChatListData> FilterdPinnedChats { get; set; }
+    public ObservableCollection<ChatListData> FilteredPinnedChats { get; set; } = [];
 
     #endregion Properties
 
@@ -287,7 +301,7 @@ public class ViewModel : ObservableObject
 
     #region Commands
 
-    //To get the ContactName of selected chat so that we can open corresponding conversation
+    // To get the ContactName of selected chat so that we can open corresponding conversation
 
     private IRelayCommand _getSelectedChatCommand;
 
@@ -301,6 +315,48 @@ public class ViewModel : ObservableObject
 
         //Getting ContactPhoto from selected chat
         ContactPhoto = data.ContactPhoto;
+    });
+
+    // To Pin Chat on Pin Button Click
+    private IRelayCommand _pinChatCommand;
+
+    public IRelayCommand PinChatCommand => _pinChatCommand ?? new RelayCommand<ChatListData>(data =>
+    {
+        if (data == null)
+            return;
+
+        if (!FilteredPinnedChats.Contains(data))
+        {
+            // Add selected chat to pin chat
+            PinnedChats.Add(data);
+            FilteredPinnedChats.Add(data);
+            data.ChatIsPinned = true;
+
+            // Remove selected chat from all chats / unpinned chats
+            Chats.Remove(data);
+            FilteredChats.Remove(data);
+        }
+    });
+
+    // To Pin Chat on Pin Button Click
+    private IRelayCommand _unPinChatCommand;
+
+    public IRelayCommand UnPinChatCommand => _unPinChatCommand ?? new RelayCommand<ChatListData>(data =>
+    {
+        if (data == null)
+            return;
+
+        if (!FilteredChats.Contains(data))
+        {
+            // Add selected chat to Normal Unpinned chat list
+            Chats.Add(data);
+            FilteredChats.Add(data);
+
+            // Remove selected pinned chats list
+            PinnedChats.Remove(data);
+            FilteredPinnedChats.Remove(data);
+            data.ChatIsPinned = false;
+        }
     });
 
     #endregion Commands
