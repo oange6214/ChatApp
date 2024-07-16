@@ -18,7 +18,9 @@ public class ViewModel : ObservableObject
 
     private string _contactName;
     private Uri _contactPhoto;
+    private string _lastSearchText;
     private string _lastSeen;
+    private string _searchText;
     private WindowState _windowState;
 
     #endregion Fields
@@ -49,15 +51,43 @@ public class ViewModel : ObservableObject
         set => SetProperty(ref _windowState, value);
     }
 
+    #region Search Chats
+
+    public string LastSearchText
+    {
+        get => _lastSearchText;
+        set => SetProperty(ref _lastSearchText, value);
+    }
+
+    public string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    Search();
+                }
+            }
+        }
+    }
+
+    #endregion Search Chats
+
     #endregion Properties
 
     #region Commands
 
-    public IRelayCommand CloseCommand => new RelayCommand(Close);
-
-    public IRelayCommand MaximizeCommand => new RelayCommand(Maximize);
-
-    public IRelayCommand MinimizeCommand => new RelayCommand(Minimize);
+    private IRelayCommand _closeCommand;
+    private IRelayCommand _maximizeCommand;
+    private IRelayCommand _minimizeCommand;
+    private IRelayCommand _searchCommand;
+    public IRelayCommand CloseCommand => _closeCommand ??= new RelayCommand(Close);
+    public IRelayCommand MaximizeCommand => _maximizeCommand ??= new RelayCommand(Maximize);
+    public IRelayCommand MinimizeCommand => _minimizeCommand ??= new RelayCommand(Minimize);
+    public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(Search);
 
     private void Close()
     {
@@ -82,6 +112,53 @@ public class ViewModel : ObservableObject
     }
 
     #endregion Commands
+
+    #region Logics
+
+    private void Search()
+    {
+        // To avoid re searching same text again
+        if (string.IsNullOrEmpty(LastSearchText) && string.IsNullOrEmpty(SearchText) || string.Equals(LastSearchText, SearchText))
+            return;
+
+        // If searchbox is empty or chats is null pr chat cound less than 0
+        if (string.IsNullOrEmpty(SearchText) || Chats == null || Chats.Count <= 0)
+        {
+            FilteredChats = new ObservableCollection<ChatListData>(Chats ?? Enumerable.Empty<ChatListData>());
+            FilteredPinnedChats = new ObservableCollection<ChatListData>(PinnedChats ?? Enumerable.Empty<ChatListData>());
+
+            // Update Last serach Text
+            LastSearchText = SearchText;
+
+            return;
+        }
+
+        // Now, to find the all chats that contain the text in our search box
+
+        // if that chat is in Normal Unpinned Chat list find there...
+
+        FilteredChats = new ObservableCollection<ChatListData>(
+            Chats.Where(
+                chat => chat.ContactName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) // if ContactName Contains SearchText then add it in filtered chat list
+                ||
+                chat.Message != null & chat.Message.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) // if Message Contains SearchText then add it in filtered chat list
+                )
+            );
+
+        // else if not found in Normal Unpinned Chat list, find in pinned chats list
+        FilteredPinnedChats = new ObservableCollection<ChatListData>(
+            PinnedChats.Where(
+                pinnedChat => pinnedChat.ContactName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) // if ContactName Contains SearchText then add it in filtered chat list
+                ||
+                pinnedChat.Message != null & pinnedChat.Message.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) // if Message Contains SearchText then add it in filtered chat list
+                )
+            );
+
+        // Update Last serach Text
+        LastSearchText = SearchText;
+    }
+
+    #endregion Logics
 
     #endregion MainWindow
 
@@ -153,6 +230,8 @@ public class ViewModel : ObservableObject
     #region Fields
 
     private ObservableCollection<ChatListData> _chats = [];
+    private ObservableCollection<ChatListData> _filteredChats = [];
+    private ObservableCollection<ChatListData> _filteredPinnedChats = [];
     private ObservableCollection<ChatListData> _pinnedChats = [];
 
     #endregion Fields
@@ -172,6 +251,19 @@ public class ViewModel : ObservableObject
         }
     }
 
+    // Filtering Chats & Pinned Chats
+    public ObservableCollection<ChatListData> FilteredChats
+    {
+        get => _filteredChats;
+        set => SetProperty(ref _filteredChats, value);
+    }
+
+    public ObservableCollection<ChatListData> FilteredPinnedChats
+    {
+        get => _filteredPinnedChats;
+        set => SetProperty(ref _filteredPinnedChats, value);
+    }
+
     public ObservableCollection<ChatListData> PinnedChats
     {
         get => _pinnedChats;
@@ -184,11 +276,6 @@ public class ViewModel : ObservableObject
             }
         }
     }
-
-    // Filtering Chats & Pinned Chats
-    public ObservableCollection<ChatListData> FilteredChats { get; set; } = [];
-
-    public ObservableCollection<ChatListData> FilteredPinnedChats { get; set; } = [];
 
     #endregion Properties
 
@@ -305,20 +392,23 @@ public class ViewModel : ObservableObject
 
     private IRelayCommand _getSelectedChatCommand;
 
-    public IRelayCommand GetSelectedChatCommand => _getSelectedChatCommand ?? new RelayCommand<ChatListData>(data =>
-    {
-        if (data == null)
-            return;
-
-        //Getting ContactName from selected chat
-        ContactName = data.ContactName;
-
-        //Getting ContactPhoto from selected chat
-        ContactPhoto = data.ContactPhoto;
-    });
-
     // To Pin Chat on Pin Button Click
     private IRelayCommand _pinChatCommand;
+
+    // To Pin Chat on Pin Button Click
+    private IRelayCommand _unPinChatCommand;
+
+    public IRelayCommand GetSelectedChatCommand => _getSelectedChatCommand ?? new RelayCommand<ChatListData>(data =>
+            {
+                if (data == null)
+                    return;
+
+                //Getting ContactName from selected chat
+                ContactName = data.ContactName;
+
+                //Getting ContactPhoto from selected chat
+                ContactPhoto = data.ContactPhoto;
+            });
 
     public IRelayCommand PinChatCommand => _pinChatCommand ?? new RelayCommand<ChatListData>(data =>
     {
@@ -337,9 +427,6 @@ public class ViewModel : ObservableObject
             FilteredChats.Remove(data);
         }
     });
-
-    // To Pin Chat on Pin Button Click
-    private IRelayCommand _unPinChatCommand;
 
     public IRelayCommand UnPinChatCommand => _unPinChatCommand ?? new RelayCommand<ChatListData>(data =>
     {
@@ -367,7 +454,6 @@ public class ViewModel : ObservableObject
     {
         LoadStatusThumbs();
         LoadChats();
-
         Task.Factory.StartNew(LoadChatConversation);
     }
 }

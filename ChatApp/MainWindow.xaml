@@ -206,7 +206,12 @@
                         VerticalContentAlignment="Center"
                         Background="Transparent"
                         BorderThickness="0"
-                        Text="Search Text" />
+                        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Return" Command="{Binding SearchCommand}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
                 </Border>
 
                 <!--#endregion-->
