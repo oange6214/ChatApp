@@ -5,12 +5,12 @@
     xmlns:customcontrols="clr-namespace:ChatApp.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:ChatApp.Models"
-    xmlns:vm="clr-namespace:ChatApp.ViewModels"
+    xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     x:Name="mainWindow"
     Title="Chat App"
     Width="1250"
     Height="768"
+    d:DataContext="{d:DesignInstance viewmodels:MainWindowViewModel}"
     AllowsTransparency="True"
     Background="Transparent"
     FontSize="15"
@@ -19,10 +19,6 @@
     WindowState="{Binding WindowState}"
     WindowStyle="None"
     mc:Ignorable="d">
-
-    <Window.DataContext>
-        <vm:ViewModel />
-    </Window.DataContext>
 
     <Window.Resources>
         <Style x:Key="ContactInfoButtonStyle" TargetType="{x:Type Button}">
@@ -218,13 +214,16 @@
 
                 <!--#region  Status Thumbnails-->
 
-                <customcontrols:StatusThumbs Grid.Row="2" />
+                <customcontrols:StatusThumbs Grid.Row="2" DataContext="{Binding StatusThumbsVM}" />
 
                 <!--#endregion-->
 
                 <!--#region ChatList-->
 
-                <customcontrols:ChatList Grid.Row="3" VerticalAlignment="Top" />
+                <customcontrols:ChatList
+                    Grid.Row="3"
+                    VerticalAlignment="Top"
+                    DataContext="{Binding ChatListVM}" />
 
                 <!--#endregion-->
             </Grid>
@@ -297,7 +296,7 @@
                 </Grid>
 
                 <!--  Conversation Body  -->
-                <customcontrols:Conversation Grid.Row="1" />
+                <customcontrols:Conversation Grid.Row="1" DataContext="{Binding ConversationVM}" />
 
                 <!--#region Textbox to send message-->
 

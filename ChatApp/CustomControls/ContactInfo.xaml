@@ -1,13 +1,12 @@
 ﻿<UserControl
     x:Class="ChatApp.CustomControls.ContactInfo"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:ChatApp.CustomControls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     MaxWidth="406"
-    d:DataContext="{d:DesignInstance viewmodels:ViewModel}"
+    d:DataContext="{d:DesignInstance viewmodels:MainWindowViewModel}"
     mc:Ignorable="d">
 
     <UserControl.Resources>

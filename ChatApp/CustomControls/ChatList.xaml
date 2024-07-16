@@ -7,7 +7,7 @@
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     x:Name="_Chats"
     MinWidth="406"
-    d:DataContext="{d:DesignInstance viewmodels:ViewModel}"
+    d:DataContext="{d:DesignInstance viewmodels:ChatListViewModel}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
