@@ -1,4 +1,4 @@
-﻿namespace Toolkit.Wpf.Mvvm.Event;
+﻿namespace Toolkit.Wpf.Mvvm.Messaging;
 
 public class MessageSentEvent
 {
