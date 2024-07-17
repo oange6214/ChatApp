@@ -1,4 +1,4 @@
-﻿namespace Toolkit.Wpf.Mvvm.Messaging;
+﻿namespace ChatApp.Models;
 
 public class ChatSelectedEvent
 {

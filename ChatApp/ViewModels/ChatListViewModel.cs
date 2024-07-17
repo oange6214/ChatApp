@@ -1,4 +1,5 @@
-﻿using ChatApp.Models;
+﻿using ChatApp.Events;
+using ChatApp.Models;
 using ChatApp.ViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using Toolkit.Wpf.Mvvm.ComponentModel;
@@ -165,6 +166,11 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
 
             //Getting ContactPhoto from selected chat
             ContactPhoto = data.ContactPhoto
+        });
+
+        _eventAggregator.Publish(new ChatListDataEvent
+        {
+            Data = data
         });
     });
 

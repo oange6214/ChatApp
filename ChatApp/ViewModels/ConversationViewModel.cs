@@ -1,4 +1,5 @@
-﻿using ChatApp.Helpers;
+﻿using ChatApp.Events;
+using ChatApp.Helpers;
 using ChatApp.Models;
 using ChatApp.ViewModels.Interfaces;
 using Microsoft.Data.SqlClient;
@@ -7,7 +8,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Windows;
 using Toolkit.Wpf.Mvvm.ComponentModel;
-using Toolkit.Wpf.Mvvm.Input;
+using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
 
 namespace ChatApp.ViewModels;
 
@@ -15,8 +16,8 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
 {
     #region Fields
 
+    private IEventAggregator _eventAggregator;
     private ObservableCollection<ChatConversation> _conversations;
-
     private IChatListViewModel _chatListVM;
 
     #endregion Fields
@@ -33,24 +34,32 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
 
     #region Ctors
 
-    //public ConversationViewModel()
-    //{ }
-
-    public ConversationViewModel(IChatListViewModel chatListVM)
+    public ConversationViewModel(
+        IEventAggregator eventAggregator,
+        IChatListViewModel chatListVM)
     {
+        _eventAggregator = eventAggregator;
         _chatListVM = chatListVM;
 
-        Task.Factory.StartNew(LoadChatConversation);
+        _eventAggregator.Subscribe<ChatListDataEvent>(OnChatListDataEvent);
+    }
+
+    private async void OnChatListDataEvent(ChatListDataEvent chatEvent)
+    {
+        await LoadChatConversation(chatEvent.Data);
     }
 
     #endregion Ctors
 
     #region Logics
 
-    private async Task LoadChatConversation()
+    private async Task LoadChatConversation(ChatListData chat)
     {
         Conversations ??= [];
 
+        Conversations.Clear();
+
+        // SQL config
         string query = "SELECT * FROM conversations WHERE ContactName=@ContactName";
 
         SqlParameter[] parameters =
@@ -58,6 +67,7 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
             SqlHelper.CreateParameter("@ContactName", "Mike", SqlDbType.NVarChar),
         };
 
+        // Call SQL
         try
         {
             await SqlHelper.ExecuteReaderAsync(query, (args) =>

@@ -91,9 +91,6 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
     #region Ctors
 
-    //public MainWindowViewModel()
-    //{ }
-
     public MainWindowViewModel(
         IEventAggregator eventAggregator,
         IChatListViewModel chatListVM,
