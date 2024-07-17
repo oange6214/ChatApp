@@ -136,6 +136,8 @@
 
                                                 <!--  Option Button  -->
                                                 <UniformGrid Grid.Column="1" Columns="4">
+
+                                                    <!--  Pin / Unpin Chat button  -->
                                                     <Button CommandParameter="{Binding}">
 
                                                         <!--  To show UnPin icon and Command to unpint when the chat i pinned.  -->
@@ -156,6 +158,7 @@
                                                         </Button.Style>
                                                     </Button>
 
+                                                    <!--  Archive / UnArchive Chat button  -->
                                                     <Button CommandParameter="{Binding}">
 
                                                         <!--  To show Unarchive icon and Command to unarchive when the chat i pinned or unpinned.  -->
@@ -167,7 +170,7 @@
 
                                                                 <!--  Style when Chat is pinned  -->
                                                                 <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding ChatIsPinned}" Value="True">
+                                                                    <DataTrigger Binding="{Binding ChatIsArchive}" Value="True">
                                                                         <Setter Property="Content" Value="{StaticResource unarchive}" />
                                                                         <Setter Property="Command" Value="{Binding DataContext.UnArchiveChatCommand, ElementName=_Chats}" />
                                                                     </DataTrigger>
@@ -191,56 +194,188 @@
                 </RadioButton.Style>
             </RadioButton>
         </DataTemplate>
+
+        <Style x:Key="ArchiveButtonStyle" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Visibility" Value="Visible" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border Background="{TemplateBinding Background}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <!--  Back Icon  -->
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid
+                                    x:Name="bg"
+                                    Grid.ColumnSpan="2"
+                                    Opacity=".6" />
+
+                                <Path
+                                    Margin="20,0"
+                                    HorizontalAlignment="Left"
+                                    Data="{Binding Content, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                    Fill="Black"
+                                    Style="{StaticResource {x:Type Path}}" />
+
+                                <TextBlock
+                                    Grid.ColumnSpan="2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold">
+                                    <Run Text="Archive (" />
+                                    <!--  Archived Chats Count  -->
+                                    <Run Text="{Binding DataContext.ArchivedChats.Count, Mode=OneWay, ElementName=_Chats}" />
+                                    <Run Text=")" />
+                                </TextBlock>
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <!--  If there is no chats archived than hide button.  -->
+                            <DataTrigger Binding="{Binding DataContext.ArchivedChats.Count, Mode=OneWay, ElementName=_Chats}" Value="0">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#DCE1DE" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#DCE1DE" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <!--  TODO: Scroll Bar style  -->
     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
         <Grid Margin="25,15">
-            <!--  In this usercontrol we will list our Contact chats list  -->
 
-            <StackPanel>
+            <Grid>
+                <!--  We need to hide this grid when archived chat is open  -->
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Visibility, ElementName=ArchivePanel}" Value="Visible">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
 
-                <!--  Title  -->
-                <!--  Pinned Chats  -->
-                <StackPanel Orientation="Horizontal">
-                    <Path
-                        Data="{StaticResource pinned}"
-                        Fill="Black"
-                        Stroke="Black"
-                        StrokeThickness="1" />
+                <Grid.RowDefinitions>
+                    <!--  Pinned / Unpinned Chat List  -->
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-                    <TextBlock
-                        Margin="10,0"
-                        VerticalAlignment="Center"
-                        FontWeight="SemiBold"
-                        Text="Pinned" />
+                <!--  Pinned / Unpinned Chat List  -->
+                <StackPanel>
+                    <!--  Hide Pinned Chat Panel if No chats are pinned  -->
+                    <StackPanel.Style>
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding FilteredPinnedChats.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <!--  Title  -->
+                    <!--  Pinned Chats  -->
+                    <StackPanel Orientation="Horizontal">
+
+                        <Path
+                            Data="{StaticResource pinned}"
+                            Fill="Black"
+                            Stroke="Black"
+                            StrokeThickness="1" />
+
+                        <TextBlock
+                            Margin="10,0"
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Pinned" />
+                    </StackPanel>
+
+                    <!--  Chat List  -->
+                    <!--  Since we want to show filtered chats on search  -->
+                    <ItemsControl
+                        Padding="15,0"
+                        ItemTemplate="{StaticResource ChatButtonItemTemplate}"
+                        ItemsSource="{Binding FilteredPinnedChats}" />
                 </StackPanel>
 
-                <!--  Chat List  -->
-                <!--  Since we want to show filtered chats on search  -->
-                <ItemsControl
-                    Padding="15,0"
-                    ItemTemplate="{StaticResource ChatButtonItemTemplate}"
-                    ItemsSource="{Binding FilteredPinnedChats}" />
+                <StackPanel Grid.Row="1">
+                    <!--  All Chats  -->
+                    <!--  Title  -->
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{StaticResource allchats}" Fill="Black" />
 
-                <!--  All Chats  -->
-                <!--  Title  -->
-                <StackPanel Orientation="Horizontal">
-                    <Path Data="{StaticResource allchats}" Fill="Black" />
+                        <TextBlock
+                            Margin="10,0"
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="All Chats" />
+                    </StackPanel>
 
-                    <TextBlock
-                        Margin="10,0"
-                        VerticalAlignment="Center"
-                        FontWeight="SemiBold"
-                        Text="All Chats" />
+                    <!--  Chat List  -->
+                    <!--  Since we want to show filtered chats on search  -->
+                    <ItemsControl
+                        Padding="15,0"
+                        ItemTemplate="{StaticResource ChatButtonItemTemplate}"
+                        ItemsSource="{Binding FilteredChats}" />
+
+                    <RadioButton
+                        x:Name="btnOpenArchive"
+                        GroupName="Archive"
+                        Style="{StaticResource ArchiveButtonStyle}" />
                 </StackPanel>
+            </Grid>
 
-                <!--  Chat List  -->
-                <!--  Since we want to show filtered chats on search  -->
+            <!--  Archive Chats  -->
+            <StackPanel x:Name="ArchivePanel" Grid.Row="1">
+                <StackPanel.Style>
+                    <Style TargetType="{x:Type StackPanel}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=btnOpenArchive}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=btnCloseArchive}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Visibility, ElementName=btnCloseArchive}" Value="Collapsed">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
+                <RadioButton
+                    x:Name="btnCloseArchive"
+                    Margin="0,15"
+                    Content="{StaticResource back}"
+                    GroupName="Archive"
+                    IsChecked="True"
+                    Style="{StaticResource ArchiveButtonStyle}" />
+
                 <ItemsControl
-                    Padding="15,0"
+                    Background="Transparent"
+                    BorderThickness="0"
                     ItemTemplate="{StaticResource ChatButtonItemTemplate}"
-                    ItemsSource="{Binding FilteredChats}" />
+                    ItemsSource="{Binding ArchivedChats}" />
             </StackPanel>
         </Grid>
     </ScrollViewer>

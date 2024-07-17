@@ -12,8 +12,9 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
 {
     #region Fields
 
-    private IEventAggregator _eventAggregator;
+    private ObservableCollection<ChatListData> _archivedChats = [];
     private ObservableCollection<ChatListData> _chats = [];
+    private IEventAggregator _eventAggregator;
     private ObservableCollection<ChatListData> _filteredChats = [];
     private ObservableCollection<ChatListData> _filteredPinnedChats = [];
     private ObservableCollection<ChatListData> _pinnedChats = [];
@@ -21,6 +22,12 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
     #endregion Fields
 
     #region Properties
+
+    public ObservableCollection<ChatListData> ArchivedChats
+    {
+        get => _archivedChats;
+        set => SetProperty(ref _archivedChats, value);
+    }
 
     public ObservableCollection<ChatListData> Chats
     {
@@ -64,9 +71,6 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
     #endregion Properties
 
     #region Ctors
-
-    //public ChatListViewModel()
-    //{ }
 
     public ChatListViewModel(IEventAggregator eventAggregator)
     {
@@ -118,7 +122,36 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
 
     #region Commands
 
+    private IRelayCommand _archiveChatCommand;
     private IRelayCommand _getSelectedChatCommand;
+
+    // To Pin Chat on Pin Button Click
+    private IRelayCommand _pinChatCommand;
+
+    private IRelayCommand _unArchiveChatCommand;
+
+    // To get the ContactName of selected chat so that we can open corresponding conversation
+    // To Pin Chat on Pin Button Click
+    private IRelayCommand _unPinChatCommand;
+
+    public IRelayCommand ArchiveChatCommand => _archiveChatCommand ??= new RelayCommand<ChatListData>(data =>
+    {
+        if (!ArchivedChats.Contains(data))
+        {
+            // Remember, Chat will be removed from Pinned List when Archive.. and Vice Versa..
+
+            // Add Chat in Archive List
+            ArchivedChats.Add(data);
+            data.ChatIsArchived = true;
+            data.ChatIsPinned = false;
+
+            // Remove Chat from Pinned & Unpinned Chat List
+            Chats.Remove(data);
+            FilteredChats.Remove(data);
+            PinnedChats.Remove(data);
+            FilteredPinnedChats.Remove(data);
+        }
+    });
 
     public IRelayCommand GetSelectedChatCommand => _getSelectedChatCommand ??= new RelayCommand<ChatListData>(data =>
     {
@@ -133,22 +166,6 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
             //Getting ContactPhoto from selected chat
             ContactPhoto = data.ContactPhoto
         });
-    });
-
-    #region Commands
-
-    // To get the ContactName of selected chat so that we can open corresponding conversation
-
-    // To Pin Chat on Pin Button Click
-    private IRelayCommand _pinChatCommand;
-
-    // To Pin Chat on Pin Button Click
-    private IRelayCommand _unPinChatCommand;
-
-    private IRelayCommand _archiveChatCommand;
-
-    public IRelayCommand ArchiveChatCommand => _archiveChatCommand ??= new RelayCommand<ChatListData>(data =>
-    {
     });
 
     public IRelayCommand PinChatCommand => _pinChatCommand ??= new RelayCommand<ChatListData>(data =>
@@ -166,7 +183,30 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
             // Remove selected chat from all chats / unpinned chats
             Chats.Remove(data);
             FilteredChats.Remove(data);
+
+            // Fixed
+            // Remember, Chat will be removed from Pinned List when Archive.. and Vice Versa..
+            if (ArchivedChats != null)
+            {
+                if (ArchivedChats.Contains(data))
+                {
+                    ArchivedChats.Remove(data);
+                    data.ChatIsArchived = false;
+                }
+            }
         }
+    });
+
+    public IRelayCommand UnArchiveChatCommand => _unArchiveChatCommand ??= new RelayCommand<ChatListData>(data =>
+    {
+        if (!FilteredChats.Contains(data) && !Chats.Contains(data))
+        {
+            Chats.Add(data);
+            FilteredChats.Add(data);
+        }
+        ArchivedChats.Remove(data);
+        data.ChatIsArchived = false;
+        data.ChatIsPinned = false;
     });
 
     public IRelayCommand UnPinChatCommand => _unPinChatCommand ??= new RelayCommand<ChatListData>(data =>
@@ -186,8 +226,6 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
             data.ChatIsPinned = false;
         }
     });
-
-    #endregion Commands
 
     #endregion Commands
 }
