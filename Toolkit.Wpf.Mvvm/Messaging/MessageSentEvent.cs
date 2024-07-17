@@ -1,10 +1,10 @@
 ﻿namespace Toolkit.Wpf.Mvvm.Messaging;
 
-public class MessageSentEvent
+public class MessageSentEvent<T>
 {
-    public string Message { get; }
+    public T Message { get; }
 
-    public MessageSentEvent(string message)
+    public MessageSentEvent(T message)
     {
         Message = message;
     }
