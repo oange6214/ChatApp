@@ -1,11 +1,10 @@
-﻿using System.Collections.Concurrent;
-using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
+﻿using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
 
 namespace Toolkit.Wpf.Mvvm.Messaging;
 
 public class EventAggregator : IEventAggregator
 {
-    private readonly ConcurrentDictionary<Type, List<WeakReference<Delegate>>> _subScriptions = [];
+    private readonly Dictionary<Type, List<object>> _subscriptions = [];
     private readonly SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
 
     public void Publish<TEvent>(TEvent eventToPublish) where TEvent : class
@@ -13,32 +12,21 @@ public class EventAggregator : IEventAggregator
         ArgumentNullException.ThrowIfNull(eventToPublish);
 
         var eventType = typeof(TEvent);
-        if (_subScriptions.TryGetValue(eventType, out var subScriptionsList))
+
+        if (_subscriptions.TryGetValue(eventType, out List<object>? value))
         {
-            foreach (var weakReference in subScriptionsList)
+            var subscriptions = value.ToList();
+
+            foreach (var subscription in subscriptions)
             {
-                if (weakReference.TryGetTarget(out var target))
+                var action = (Action<TEvent>)subscription;
+                if (_synchronizationContext != null)
                 {
-                    var action = (Action<TEvent>)target;
-                    try
-                    {
-                        if (_synchronizationContext != null)
-                        {
-                            _synchronizationContext.Post(_ => action(eventToPublish), null);
-                        }
-                        else
-                        {
-                            action(eventToPublish);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception($"Error publishing event: {ex.Message}");
-                    }
+                    _synchronizationContext.Post(_ => action(eventToPublish), null);
                 }
                 else
                 {
-                    subScriptionsList.Remove(weakReference);
+                    action(eventToPublish);
                 }
             }
         }
@@ -47,25 +35,25 @@ public class EventAggregator : IEventAggregator
     public void Subscribe<TEvent>(Action<TEvent> action) where TEvent : class
     {
         var eventType = typeof(TEvent);
-        var subscriptionsList = _subScriptions.GetOrAdd(eventType, _ => []);
-        subscriptionsList.Add(new WeakReference<Delegate>(action));
+        if (!_subscriptions.TryGetValue(eventType, out List<object>? value))
+        {
+            value = ([]);
+            _subscriptions[eventType] = value;
+        }
+        value.Add(action);
     }
 
     public void Unsubscribe<TEvent>(Action<TEvent> action) where TEvent : class
     {
         var eventType = typeof(TEvent);
-        if (_subScriptions.TryGetValue(eventType, out var subscriptionsList))
+        if (_subscriptions.TryGetValue(eventType, out List<object>? value))
         {
-            subscriptionsList.RemoveAll(weakReference =>
-                !weakReference.TryGetTarget(out var target) || target == (Delegate)action);
+            value.Remove(action);
         }
     }
 
     public void CleanupDeadSubscriptions()
     {
-        foreach (var subscriptionsList in _subScriptions.Values)
-        {
-            subscriptionsList.RemoveAll(weakReference => !weakReference.TryGetTarget(out _));
-        }
+        _subscriptions.Clear();
     }
 }
