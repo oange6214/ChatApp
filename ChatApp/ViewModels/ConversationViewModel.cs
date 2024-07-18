@@ -16,10 +16,10 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
 {
     #region Fields
 
+    private IChatListViewModel _chatListVM;
+    private ObservableCollection<ChatConversation> _conversations;
     private IEventAggregator _eventAggregator;
     private ObservableCollection<ChatConversation> _filteredConversations;
-    private ObservableCollection<ChatConversation> _conversations;
-    private IChatListViewModel _chatListVM;
 
     #endregion Fields
 
@@ -45,6 +45,24 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
     {
         get => _filteredConversations;
         set => SetProperty(ref _filteredConversations, value);
+    }
+
+    private string _lastSearchConversationText;
+    private string _searchConversationText;
+
+    public string SearchConversationText
+    {
+        get => _searchConversationText;
+        set
+        {
+            if (SetProperty(ref _searchConversationText, value))
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    SearchConversation();
+                }
+            }
+        }
     }
 
     #endregion Properties

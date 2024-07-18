@@ -157,41 +157,30 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     private void Search()
     {
         // To avoid re searching same text again
-        if (string.IsNullOrEmpty(LastSearchText) && string.IsNullOrEmpty(SearchText) || string.Equals(LastSearchText, SearchText))
+        if (string.IsNullOrWhiteSpace(LastSearchText) && string.IsNullOrWhiteSpace(SearchText) || string.Equals(LastSearchText, SearchText, StringComparison.OrdinalIgnoreCase))
             return;
 
         // If searchbox is empty or chats is null pr chat cound less than 0
-        if (string.IsNullOrEmpty(SearchText) || ChatListVM.Chats == null || ChatListVM.Chats.Count <= 0)
+        if (string.IsNullOrWhiteSpace(SearchText) || ChatListVM.Chats == null || ChatListVM.Chats.Count <= 0)
         {
             ChatListVM.FilteredChats = new ObservableCollection<ChatListData>(ChatListVM.Chats ?? Enumerable.Empty<ChatListData>());
             ChatListVM.FilteredPinnedChats = new ObservableCollection<ChatListData>(ChatListVM.PinnedChats ?? Enumerable.Empty<ChatListData>());
 
             // Update Last serach Text
             LastSearchText = SearchText;
-
             return;
         }
 
-        // Now, to find the all chats that contain the text in our search box
+        // Now, to find the all chats that contain the text in our search box, if that chat is in Normal Unpinned Chat list find there...
 
-        // if that chat is in Normal Unpinned Chat list find there...
+        Func<ChatListData, bool> searchPredicate = chat =>
+            chat.ContactName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)  // if ContactName Contains SearchText then add it in filtered chat list
+            || (chat.Message != null && chat.Message.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)); // if Message Contains SearchText then add it in filtered chat list
 
-        ChatListVM.FilteredChats = new ObservableCollection<ChatListData>(
-            ChatListVM.Chats.Where(
-                chat => chat.ContactName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) // if ContactName Contains SearchText then add it in filtered chat list
-                ||
-                chat.Message != null & chat.Message.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) // if Message Contains SearchText then add it in filtered chat list
-                )
-            );
+        ChatListVM.FilteredChats = new ObservableCollection<ChatListData>(ChatListVM.Chats.Where(searchPredicate));
 
         // else if not found in Normal Unpinned Chat list, find in pinned chats list
-        ChatListVM.FilteredPinnedChats = new ObservableCollection<ChatListData>(
-            ChatListVM.PinnedChats.Where(
-                pinnedChat => pinnedChat.ContactName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) // if ContactName Contains SearchText then add it in filtered chat list
-                ||
-                pinnedChat.Message != null & pinnedChat.Message.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) // if Message Contains SearchText then add it in filtered chat list
-                )
-            );
+        ChatListVM.FilteredPinnedChats = new ObservableCollection<ChatListData>(ChatListVM.PinnedChats.Where(searchPredicate));
 
         // Update Last serach Text
         LastSearchText = SearchText;
