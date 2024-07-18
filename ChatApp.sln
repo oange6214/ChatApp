@@ -5,7 +5,13 @@ VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp", "ChatApp\ChatApp.csproj", "{9737A96C-C809-4FF3-98E5-5FEF412BC490}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toolkit.Wpf.Mvvm", "Toolkit.Wpf.Mvvm\Toolkit.Wpf.Mvvm.csproj", "{FD9A6A05-C4D8-4CC7-819A-AF0D40C244BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Toolkit.Wpf.Mvvm", "Toolkit.Wpf.Mvvm\Toolkit.Wpf.Mvvm.csproj", "{FD9A6A05-C4D8-4CC7-819A-AF0D40C244BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.Data", "ChatApp.Data\ChatApp.Data.csproj", "{C05EF655-A913-4144-A1A8-8261DFD3A8E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.Domain", "ChatApp.Domain\ChatApp.Domain.csproj", "{F91F62B2-F359-4829-A3CA-992642BB77DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.Services", "ChatApp.Services\ChatApp.Services.csproj", "{14FC6985-CBD1-4F59-97DB-58F8A8DDAB54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{FD9A6A05-C4D8-4CC7-819A-AF0D40C244BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD9A6A05-C4D8-4CC7-819A-AF0D40C244BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD9A6A05-C4D8-4CC7-819A-AF0D40C244BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C05EF655-A913-4144-A1A8-8261DFD3A8E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C05EF655-A913-4144-A1A8-8261DFD3A8E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C05EF655-A913-4144-A1A8-8261DFD3A8E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C05EF655-A913-4144-A1A8-8261DFD3A8E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F91F62B2-F359-4829-A3CA-992642BB77DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F91F62B2-F359-4829-A3CA-992642BB77DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F91F62B2-F359-4829-A3CA-992642BB77DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F91F62B2-F359-4829-A3CA-992642BB77DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14FC6985-CBD1-4F59-97DB-58F8A8DDAB54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14FC6985-CBD1-4F59-97DB-58F8A8DDAB54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14FC6985-CBD1-4F59-97DB-58F8A8DDAB54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14FC6985-CBD1-4F59-97DB-58F8A8DDAB54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

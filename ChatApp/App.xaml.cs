@@ -1,4 +1,9 @@
-﻿using ChatApp.ViewModels;
+﻿using ChatApp.Data;
+using ChatApp.Data.Interfaces;
+using ChatApp.Data.Repositories;
+using ChatApp.Services.Implementation;
+using ChatApp.Services.Interfaces;
+using ChatApp.ViewModels;
 using ChatApp.ViewModels.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +52,11 @@ public partial class App : Application
     private void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<IEventAggregator, EventAggregator>();
+
+        services.AddSingleton<IDbConnectionFactory>(sp =>
+        new DbConnectionFactory(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\Workspaces\Devolops\WPFs\ChatApp\ChatApp\Database\Database1.mdf;Integrated Security=True"));
+        services.AddScoped<IChatRepository, ChatRepository>();
+        services.AddScoped<IChatService, ChatService>();
 
         services.AddSingleton<IStatusThumbsViewModel, StatusThumbsViewModel>();
         services.AddSingleton<IChatListViewModel, ChatListViewModel>();

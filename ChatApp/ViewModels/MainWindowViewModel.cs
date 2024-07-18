@@ -5,7 +5,6 @@ using System.Data;
 using System.Windows;
 using Toolkit.Wpf.Mvvm.ComponentModel;
 using Toolkit.Wpf.Mvvm.Input;
-using Toolkit.Wpf.Mvvm.Messaging;
 using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
 
 namespace ChatApp.ViewModels;
@@ -64,12 +63,6 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
     #region Search Chats
 
-    public string LastSearchText
-    {
-        get => _lastSearchText;
-        set => SetProperty(ref _lastSearchText, value);
-    }
-
     public string SearchText
     {
         get => _searchText;
@@ -77,7 +70,7 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
         {
             if (SetProperty(ref _searchText, value))
             {
-                if (string.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(_searchText))
                 {
                     Search();
                 }
@@ -157,7 +150,7 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     private void Search()
     {
         // To avoid re searching same text again
-        if (string.IsNullOrWhiteSpace(LastSearchText) && string.IsNullOrWhiteSpace(SearchText) || string.Equals(LastSearchText, SearchText, StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrWhiteSpace(_lastSearchText) && string.IsNullOrWhiteSpace(SearchText) || string.Equals(_lastSearchText, SearchText, StringComparison.OrdinalIgnoreCase))
             return;
 
         // If searchbox is empty or chats is null pr chat cound less than 0
@@ -167,7 +160,7 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
             ChatListVM.FilteredPinnedChats = new ObservableCollection<ChatListData>(ChatListVM.PinnedChats ?? Enumerable.Empty<ChatListData>());
 
             // Update Last serach Text
-            LastSearchText = SearchText;
+            _lastSearchText = SearchText;
             return;
         }
 
@@ -183,7 +176,7 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
         ChatListVM.FilteredPinnedChats = new ObservableCollection<ChatListData>(ChatListVM.PinnedChats.Where(searchPredicate));
 
         // Update Last serach Text
-        LastSearchText = SearchText;
+        _lastSearchText = SearchText;
     }
 
     #endregion Logics

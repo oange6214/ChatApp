@@ -1,8 +1,8 @@
 ﻿<UserControl
     x:Class="ChatApp.CustomControls.ChatList"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     x:Name="_Chats"
@@ -170,7 +170,7 @@
 
                                                                 <!--  Style when Chat is pinned  -->
                                                                 <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding ChatIsArchive}" Value="True">
+                                                                    <DataTrigger Binding="{Binding ChatIsArchived}" Value="True">
                                                                         <Setter Property="Content" Value="{StaticResource unarchive}" />
                                                                         <Setter Property="Command" Value="{Binding DataContext.UnArchiveChatCommand, ElementName=_Chats}" />
                                                                     </DataTrigger>
@@ -206,7 +206,6 @@
                         <Border Background="{TemplateBinding Background}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <!--  Back Icon  -->
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
@@ -216,6 +215,7 @@
                                     Grid.ColumnSpan="2"
                                     Opacity=".6" />
 
+                                <!--  Back Icon  -->
                                 <Path
                                     Margin="20,0"
                                     HorizontalAlignment="Left"
@@ -223,13 +223,13 @@
                                     Fill="Black"
                                     Style="{StaticResource {x:Type Path}}" />
 
+                                <!--  Archived Chats Count  -->
                                 <TextBlock
                                     Grid.ColumnSpan="2"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     FontWeight="SemiBold">
                                     <Run Text="Archive (" />
-                                    <!--  Archived Chats Count  -->
                                     <Run Text="{Binding DataContext.ArchivedChats.Count, Mode=OneWay, ElementName=_Chats}" />
                                     <Run Text=")" />
                                 </TextBlock>
@@ -259,7 +259,12 @@
     <!--  TODO: Scroll Bar style  -->
     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
         <Grid Margin="25,15">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
+            <!--  All Chat & Pinned / Unpinned Chat  -->
             <Grid>
                 <!--  We need to hide this grid when archived chat is open  -->
                 <Grid.Style>
@@ -275,6 +280,8 @@
                 <Grid.RowDefinitions>
                     <!--  Pinned / Unpinned Chat List  -->
                     <RowDefinition Height="auto" />
+
+                    <!--  All Chats  -->
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
@@ -308,7 +315,7 @@
                             Text="Pinned" />
                     </StackPanel>
 
-                    <!--  Chat List  -->
+                    <!--  Filtered Pinned Chats List  -->
                     <!--  Since we want to show filtered chats on search  -->
                     <ItemsControl
                         Padding="15,0"
@@ -316,8 +323,8 @@
                         ItemsSource="{Binding FilteredPinnedChats}" />
                 </StackPanel>
 
+                <!--  All Chats  -->
                 <StackPanel Grid.Row="1">
-                    <!--  All Chats  -->
                     <!--  Title  -->
                     <StackPanel Orientation="Horizontal">
                         <Path Data="{StaticResource allchats}" Fill="Black" />
@@ -329,7 +336,7 @@
                             Text="All Chats" />
                     </StackPanel>
 
-                    <!--  Chat List  -->
+                    <!--  Filtered Chats List  -->
                     <!--  Since we want to show filtered chats on search  -->
                     <ItemsControl
                         Padding="15,0"
@@ -344,7 +351,7 @@
             </Grid>
 
             <!--  Archive Chats  -->
-            <StackPanel x:Name="ArchivePanel" Grid.Row="1">
+            <StackPanel x:Name="ArchivePanel">
                 <StackPanel.Style>
                     <Style TargetType="{x:Type StackPanel}">
                         <Style.Triggers>
@@ -371,6 +378,7 @@
                     IsChecked="True"
                     Style="{StaticResource ArchiveButtonStyle}" />
 
+                <!--  Archived Chats  -->
                 <ItemsControl
                     Background="Transparent"
                     BorderThickness="0"

@@ -4,7 +4,6 @@ using ChatApp.ViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using Toolkit.Wpf.Mvvm.ComponentModel;
 using Toolkit.Wpf.Mvvm.Input;
-using Toolkit.Wpf.Mvvm.Messaging;
 using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
 
 namespace ChatApp.ViewModels;
