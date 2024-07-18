@@ -1,4 +1,5 @@
-﻿using ChatApp.Events;
+﻿using ChatApp.CustomControls;
+using ChatApp.Events;
 using ChatApp.Helpers;
 using ChatApp.Models;
 using ChatApp.ViewModels.Interfaces;
@@ -8,6 +9,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Windows;
 using Toolkit.Wpf.Mvvm.ComponentModel;
+using Toolkit.Wpf.Mvvm.Input;
 using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
 
 namespace ChatApp.ViewModels;
@@ -105,6 +107,7 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         // Call SQL
         try
         {
+            ObservableCollection<ChatConversation> temp = [];
             await SqlHelper.ExecuteReaderAsync(query, (args) =>
             {
                 var data = args.Data as dynamic;
@@ -119,8 +122,10 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
                     IsMessageReceived = data.IsMessageReceived
                 };
 
-                Application.Current.Dispatcher.Invoke(() => Conversations.Add(conversation));
+                temp.Add(conversation);
             }, parameters);
+
+            Conversations = temp;
         }
         catch (Exception ex)
         {
@@ -128,5 +133,42 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         }
     }
 
+    private void SearchConversation()
+    {
+        // To avoid re searching same text again
+        if (string.IsNullOrWhiteSpace(_lastSearchConversationText)
+            && string.IsNullOrWhiteSpace(SearchConversationText)
+            || string.Equals(_lastSearchConversationText, SearchConversationText, StringComparison.OrdinalIgnoreCase))
+            return;
+
+        // If searchbox is empty or chats is null pr chat cound less than 0
+        if (string.IsNullOrWhiteSpace(SearchConversationText) || Conversations == null || Conversations.Count <= 0)
+        {
+            FilteredConversations = new ObservableCollection<ChatConversation>(Conversations ?? Enumerable.Empty<ChatConversation>());
+
+            // Update Last serach Text
+            _lastSearchConversationText = SearchConversationText;
+            return;
+        }
+
+        FilteredConversations = new ObservableCollection<ChatConversation>(
+            Conversations.Where(chat =>
+                chat.ReceivedMessage.Contains(SearchConversationText, StringComparison.CurrentCultureIgnoreCase)
+                || chat.SentMessage.Contains(SearchConversationText, StringComparison.CurrentCultureIgnoreCase)
+            )
+        );
+
+        // Update Last serach Text
+        _lastSearchConversationText = SearchConversationText;
+    }
+
     #endregion Logics
+
+    #region Commands
+
+    private IRelayCommand _searchConversationCommand;
+
+    public IRelayCommand SearchConversationCommand => _searchConversationCommand ??= new RelayCommand(SearchConversation);
+
+    #endregion Commands
 }
