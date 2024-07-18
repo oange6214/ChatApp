@@ -17,6 +17,7 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
     #region Fields
 
     private IEventAggregator _eventAggregator;
+    private ObservableCollection<ChatConversation> _filteredConversations;
     private ObservableCollection<ChatConversation> _conversations;
     private IChatListViewModel _chatListVM;
 
@@ -27,7 +28,23 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
     public ObservableCollection<ChatConversation> Conversations
     {
         get => _conversations;
-        set => SetProperty(ref _conversations, value);
+        set
+        {
+            if (SetProperty(ref _conversations, value))
+            {
+                // Updating filtered chats to match
+                FilteredConversations = new ObservableCollection<ChatConversation>(_conversations);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Filter Conversation
+    /// </summary>
+    public ObservableCollection<ChatConversation> FilteredConversations
+    {
+        get => _filteredConversations;
+        set => SetProperty(ref _filteredConversations, value);
     }
 
     #endregion Properties
@@ -64,7 +81,7 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
 
         SqlParameter[] parameters =
         {
-            SqlHelper.CreateParameter("@ContactName", "Mike", SqlDbType.NVarChar),
+            SqlHelper.CreateParameter("@ContactName", chat.ContactName, SqlDbType.NVarChar),
         };
 
         // Call SQL
