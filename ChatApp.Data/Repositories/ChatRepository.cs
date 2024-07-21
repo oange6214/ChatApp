@@ -48,7 +48,7 @@ public class ChatRepository : IChatRepository
     {
         using var connection = _connectionFactory.CreateConnection();
         return await connection.QueryAsync<ChatConversationEntity>(
-            "SELECT * FROM conversations WHERE ContactName = @ContactName ORDER BY MsgSentOn DESC",
+            "SELECT * FROM conversations WHERE ContactName = @ContactName",
             new { ContactName = contactName });
     }
 

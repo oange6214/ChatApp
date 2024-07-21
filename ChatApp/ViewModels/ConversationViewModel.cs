@@ -2,6 +2,7 @@
 using ChatApp.Events;
 using ChatApp.Helpers;
 using ChatApp.Models;
+using ChatApp.Services.Interfaces;
 using ChatApp.ViewModels.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Collections.ObjectModel;
@@ -18,6 +19,7 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
 {
     #region Fields
 
+    private IChatService _chatService;
     private IChatListViewModel _chatListVM;
     private ObservableCollection<ChatConversation> _conversations;
     private IEventAggregator _eventAggregator;
@@ -73,9 +75,11 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
 
     public ConversationViewModel(
         IEventAggregator eventAggregator,
+        IChatService chatService,
         IChatListViewModel chatListVM)
     {
         _eventAggregator = eventAggregator;
+        _chatService = chatService;
         _chatListVM = chatListVM;
 
         _eventAggregator.Subscribe<ChatListDataEvent>(OnChatListDataEvent);
@@ -97,34 +101,25 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         Conversations.Clear();
         FilteredConversations.Clear();
 
-        // SQL config
-        string query = "SELECT * FROM conversations WHERE ContactName=@ContactName";
-
-        SqlParameter[] parameters =
-        {
-            SqlHelper.CreateParameter("@ContactName", chat.ContactName, SqlDbType.NVarChar),
-        };
-
         // Call SQL
         try
         {
             ObservableCollection<ChatConversation> temp = [];
-            await SqlHelper.ExecuteReaderAsync(query, (args) =>
-            {
-                var data = args.Data as dynamic;
 
-                ChatConversation conversation = new()
+            var result = await _chatService.GetConversationsByContactNameAsync(chat.ContactName);
+
+            foreach (var data in result)
+            {
+                temp.Add(new ChatConversation
                 {
                     ContactName = data.ContactName,
                     ReceivedMessage = data.ReceivedMessage,
                     MsgReceivedOn = data.MsgReceivedOn,
                     SentMessage = data.SentMessage,
                     MsgSentOn = data.MsgSentOn,
-                    IsMessageReceived = data.IsMessageReceived
-                };
-
-                temp.Add(conversation);
-            }, parameters);
+                    IsMessageReceived = data.IsMessageReceived,
+                });
+            }
 
             Conversations = temp;
         }

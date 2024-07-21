@@ -43,8 +43,9 @@ public class ChatService : IChatService
                 ContactName = conversation.ContactName,
                 ReceivedMessage = conversation.ReceivedMsgs,
                 MsgReceivedOn = conversation.MsgReceivedOn,
-                SentMessage = conversation.MsgReceivedOn,
+                SentMessage = conversation.SentMsgs,
                 MsgSentOn = conversation.MsgSentOn,
+                IsMessageReceived = !string.IsNullOrEmpty(conversation.ReceivedMsgs)
             });
         }
 
