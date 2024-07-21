@@ -95,6 +95,7 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         Conversations ??= [];
 
         Conversations.Clear();
+        FilteredConversations.Clear();
 
         // SQL config
         string query = "SELECT * FROM conversations WHERE ContactName=@ContactName";
