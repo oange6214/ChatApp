@@ -1,4 +1,5 @@
-﻿using ChatApp.Data.Repositories;
+﻿using AutoMapper;
+using ChatApp.Data.Repositories;
 using ChatApp.Domain.Models;
 using ChatApp.Services.Interfaces;
 
@@ -7,9 +8,11 @@ namespace ChatApp.Services.Implementation;
 public class ChatService : IChatService
 {
     private readonly IChatRepository _chatRepository;
+    private readonly IMapper _mapper;
 
-    public ChatService(IChatRepository chatRepository)
+    public ChatService(IChatRepository chatRepository, IMapper mapper)
     {
+        _mapper = mapper;
         _chatRepository = chatRepository;
     }
 
@@ -29,26 +32,9 @@ public class ChatService : IChatService
     //    return await _chatRepository.GetConversationByIdAsync(id);
     //}
 
-    public async Task<IEnumerable<ChatConversationDto>> GetConversationsByContactNameAsync(string contactName)
+    public async Task<IEnumerable<ChatConversation>> GetConversationsByContactNameAsync(string contactName)
     {
-        //return await _chatRepository.GetConversationsByContactNameAsync(contactName);
-
-        var src = await _chatRepository.GetConversationsByContactNameAsync(contactName);
-
-        var dto = new List<ChatConversationDto>();
-        foreach (var conversation in src)
-        {
-            dto.Add(new ChatConversationDto
-            {
-                ContactName = conversation.ContactName,
-                ReceivedMessage = conversation.ReceivedMsgs,
-                MsgReceivedOn = conversation.MsgReceivedOn,
-                SentMessage = conversation.SentMsgs,
-                MsgSentOn = conversation.MsgSentOn,
-                IsMessageReceived = !string.IsNullOrEmpty(conversation.ReceivedMsgs)
-            });
-        }
-
-        return dto;
+        var conversations = await _chatRepository.GetConversationsByContactNameAsync(contactName);
+        return _mapper.Map<IEnumerable<ChatConversation>>(conversations);
     }
 }

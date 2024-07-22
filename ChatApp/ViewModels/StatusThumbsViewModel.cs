@@ -1,4 +1,4 @@
-﻿using ChatApp.Models;
+﻿using ChatApp.Domain.Models;
 using ChatApp.ViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using Toolkit.Wpf.Mvvm.ComponentModel;

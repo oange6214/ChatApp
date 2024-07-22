@@ -62,6 +62,7 @@ public partial class App : Application
         services.AddSingleton<IChatListViewModel, ChatListViewModel>();
         services.AddSingleton<IConversationViewModel, ConversationViewModel>();
         services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
+        services.AddSingleton(AutoMapperConfig.Initialize());
 
         services.AddSingleton<MainWindow>();
     }

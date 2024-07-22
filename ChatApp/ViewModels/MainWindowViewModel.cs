@@ -1,4 +1,5 @@
-﻿using ChatApp.Models;
+﻿using ChatApp.Domain.Models;
+using ChatApp.EventArgs;
 using ChatApp.ViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -95,14 +96,14 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
         ChatListVM = chatListVM;
         ConversationVM = conversationVM;
 
-        _eventAggregator.Subscribe<ChatSelectedEvent>(OnChatSelected);
+        _eventAggregator.Subscribe<ChatSelectedEventArgs>(OnChatSelected);
     }
 
     #endregion Ctors
 
     #region Event Aggregator Methods
 
-    private void OnChatSelected(ChatSelectedEvent evt)
+    private void OnChatSelected(ChatSelectedEventArgs evt)
     {
         ContactName = evt.ContactName;
         ContactPhoto = evt.ContactPhoto;

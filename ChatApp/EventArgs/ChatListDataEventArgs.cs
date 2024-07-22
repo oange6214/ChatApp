@@ -1,8 +1,8 @@
-﻿using ChatApp.Models;
+﻿using ChatApp.Domain.Models;
 
-namespace ChatApp.Events;
+namespace ChatApp.EventArgs;
 
-public class ChatListDataEvent
+public class ChatListDataEventArgs
 {
     public string GUID { get; } = Guid.NewGuid().ToString();
     public ChatListData Data { get; set; }

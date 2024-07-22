@@ -1,4 +1,4 @@
-﻿namespace ChatApp.Models;
+﻿namespace ChatApp.Domain.Models;
 
 public class StatusDataModel
 {

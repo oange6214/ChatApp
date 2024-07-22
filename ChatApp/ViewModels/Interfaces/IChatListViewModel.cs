@@ -1,4 +1,4 @@
-﻿using ChatApp.Models;
+﻿using ChatApp.Domain.Models;
 using System.Collections.ObjectModel;
 
 namespace ChatApp.ViewModels.Interfaces;

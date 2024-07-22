@@ -1,5 +1,5 @@
-﻿using ChatApp.Events;
-using ChatApp.Models;
+﻿using ChatApp.Domain.Models;
+using ChatApp.EventArgs;
 using ChatApp.ViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using Toolkit.Wpf.Mvvm.ComponentModel;
@@ -158,7 +158,7 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
         if (data == null)
             return;
 
-        _eventAggregator.Publish(new ChatSelectedEvent
+        _eventAggregator.Publish(new ChatSelectedEventArgs
         {
             //Getting ContactName from selected chat
             ContactName = data.ContactName,
@@ -167,7 +167,7 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
             ContactPhoto = data.ContactPhoto
         });
 
-        _eventAggregator.Publish(new ChatListDataEvent
+        _eventAggregator.Publish(new ChatListDataEventArgs
         {
             Data = data
         });

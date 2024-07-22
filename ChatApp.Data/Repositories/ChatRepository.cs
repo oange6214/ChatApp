@@ -1,5 +1,5 @@
-﻿using ChatApp.Data.Interfaces;
-using ChatApp.Domain.Models;
+﻿using ChatApp.Data.Entities;
+using ChatApp.Data.Interfaces;
 using Dapper;
 
 namespace ChatApp.Data.Repositories;
@@ -34,7 +34,7 @@ public class ChatRepository : IChatRepository
     {
         using var connection = _connectionFactory.CreateConnection();
         return await connection.QueryAsync<ChatConversationEntity>(
-            "SELECT * FROM conversations ORDER BY MsgSentOn DESC");
+            "SELECT * FROM conversations");
     }
 
     public async Task<ChatConversationEntity> GetConversationByIdAsync(int id)
@@ -56,7 +56,7 @@ public class ChatRepository : IChatRepository
     {
         using var connection = _connectionFactory.CreateConnection();
         return await connection.ExecuteScalarAsync<DateTime?>(
-            "SELECT TOP 1 MsgSentOn FROM conversations WHERE ContactName = @ContactName ORDER BY MsgSentOn DESC",
+            "SELECT TOP 1 MsgSentOn FROM conversations WHERE ContactName = @ContactName",
             new { ContactName = contactName });
     }
 
@@ -64,7 +64,7 @@ public class ChatRepository : IChatRepository
     {
         using var connection = _connectionFactory.CreateConnection();
         return await connection.QueryAsync<ChatConversationEntity>(
-            "SELECT TOP (@Count) * FROM conversations ORDER BY MsgSentOn DESC",
+            "SELECT TOP (@Count) * FROM conversations",
             new { Count = count });
     }
 

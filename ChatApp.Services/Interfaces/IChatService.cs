@@ -4,11 +4,11 @@ namespace ChatApp.Services.Interfaces;
 
 public interface IChatService
 {
-    //Task<bool> AddConversationAsync(ChatConversationDto conversation);
+    //Task<bool> AddConversationAsync(ChatConversation conversation);
 
-    //Task<IEnumerable<ChatConversationDto>> GetAllConversationsAsync();
+    //Task<IEnumerable<ChatConversation>> GetAllConversationsAsync();
 
-    //Task<ChatConversationDto> GetConversationByIdAsync(int id);
+    //Task<ChatConversation> GetConversationByIdAsync(int id);
 
-    Task<IEnumerable<ChatConversationDto>> GetConversationsByContactNameAsync(string contactName);
+    Task<IEnumerable<ChatConversation>> GetConversationsByContactNameAsync(string contactName);
 }

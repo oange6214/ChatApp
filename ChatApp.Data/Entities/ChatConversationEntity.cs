@@ -1,4 +1,4 @@
-﻿namespace ChatApp.Domain.Models;
+﻿namespace ChatApp.Data.Entities;
 
 public class ChatConversationEntity
 {

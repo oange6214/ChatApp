@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.Domain.Models;
 
-public class ChatConversationDto
+public class ChatConversation
 {
     public string ContactName { get; set; }
     public string ReceivedMessage { get; set; }

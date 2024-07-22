@@ -1,17 +1,16 @@
-﻿using ChatApp.CustomControls;
-using ChatApp.Events;
-using ChatApp.Helpers;
-using ChatApp.Models;
+﻿using ChatApp.Domain.Models;
+
+using ChatApp.Domain.Models;
+
 using ChatApp.Services.Interfaces;
 using ChatApp.ViewModels.Interfaces;
-using Microsoft.Data.SqlClient;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
-using System.Windows;
 using Toolkit.Wpf.Mvvm.ComponentModel;
 using Toolkit.Wpf.Mvvm.Input;
 using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
+using ChatApp.EventArgs;
 
 namespace ChatApp.ViewModels;
 
@@ -82,10 +81,10 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         _chatService = chatService;
         _chatListVM = chatListVM;
 
-        _eventAggregator.Subscribe<ChatListDataEvent>(OnChatListDataEvent);
+        _eventAggregator.Subscribe<ChatListDataEventArgs>(OnChatListDataEvent);
     }
 
-    private async void OnChatListDataEvent(ChatListDataEvent chatEvent)
+    private async void OnChatListDataEvent(ChatListDataEventArgs chatEvent)
     {
         await LoadChatConversation(chatEvent.Data);
     }
@@ -101,27 +100,10 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         Conversations.Clear();
         FilteredConversations.Clear();
 
-        // Call SQL
         try
         {
-            ObservableCollection<ChatConversation> temp = [];
-
-            var result = await _chatService.GetConversationsByContactNameAsync(chat.ContactName);
-
-            foreach (var data in result)
-            {
-                temp.Add(new ChatConversation
-                {
-                    ContactName = data.ContactName,
-                    ReceivedMessage = data.ReceivedMessage,
-                    MsgReceivedOn = data.MsgReceivedOn,
-                    SentMessage = data.SentMessage,
-                    MsgSentOn = data.MsgSentOn,
-                    IsMessageReceived = data.IsMessageReceived,
-                });
-            }
-
-            Conversations = temp;
+            var conversations = await _chatService.GetConversationsByContactNameAsync(chat.ContactName);
+            Conversations = new ObservableCollection<ChatConversation>(conversations);
         }
         catch (Exception ex)
         {
@@ -148,14 +130,29 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         }
 
         FilteredConversations = new ObservableCollection<ChatConversation>(
-            Conversations.Where(chat =>
-                chat.ReceivedMessage.Contains(SearchConversationText, StringComparison.CurrentCultureIgnoreCase)
-                || chat.SentMessage.Contains(SearchConversationText, StringComparison.CurrentCultureIgnoreCase)
-            )
+            Conversations.Where(chat => MatchesSearch(chat, SearchConversationText))
         );
 
         // Update Last serach Text
         _lastSearchConversationText = SearchConversationText;
+    }
+
+    private bool MatchesSearch(ChatConversation chat, string searchText)
+    {
+        if (string.IsNullOrEmpty(searchText))
+            return true;
+
+        return ContainsText(chat.ReceivedMessage, searchText)
+            || ContainsText(chat.SentMessage, searchText)
+            || ContainsText(chat.ContactName, searchText)
+            || ContainsText(chat.MsgReceivedOn, searchText)
+            || ContainsText(chat.MsgSentOn, searchText);
+    }
+
+    private bool ContainsText(string source, string searchText)
+    {
+        return !string.IsNullOrEmpty(source)
+            && source.Contains(searchText, StringComparison.CurrentCultureIgnoreCase);
     }
 
     #endregion Logics
