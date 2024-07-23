@@ -2,4 +2,5 @@
 
 public interface IConversationViewModel
 {
+    bool IsSearchConversationBoxOpen { get; set; }
 }

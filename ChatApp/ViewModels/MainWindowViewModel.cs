@@ -14,27 +14,21 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 {
     #region Fields
 
-    private IEventAggregator _eventAggregator;
     private string _contactName;
     private Uri _contactPhoto;
+    private IEventAggregator _eventAggregator;
+    private bool _isSearchBoxOpen;
     private string _lastSearchText;
     private string _lastSeen;
+    private string _messageText;
     private string _searchText;
     private WindowState _windowState;
-    private string _messageText;
 
     #endregion Fields
 
     #region Properties
 
-    public string MessageText
-    {
-        get => _messageText;
-        set => SetProperty(ref _messageText, value);
-    }
-
     public IChatListViewModel ChatListVM { get; }
-    public IConversationViewModel ConversationVM { get; }
 
     public string ContactName
     {
@@ -48,10 +42,33 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
         set => SetProperty(ref _contactPhoto, value);
     }
 
+    public IConversationViewModel ConversationVM { get; }
+
+    public bool IsSearchBoxOpen
+    {
+        get => _isSearchBoxOpen;
+        set
+        {
+            if (SetProperty(ref _isSearchBoxOpen, value))
+            {
+                if (!_isSearchBoxOpen)
+                {
+                    SearchText = string.Empty;
+                }
+            }
+        }
+    }
+
     public string LastSeen
     {
         get => _lastSeen;
         set => SetProperty(ref _lastSeen, value);
+    }
+
+    public string MessageText
+    {
+        get => _messageText;
+        set => SetProperty(ref _messageText, value);
     }
 
     public IStatusThumbsViewModel StatusThumbsVM { get; }
@@ -113,14 +130,24 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
     #region Commands
 
+    private IRelayCommand _clearSearchCommand;
     private IRelayCommand _closeCommand;
     private IRelayCommand _maximizeCommand;
     private IRelayCommand _minimizeCommand;
+    private IRelayCommand _openConversationSearchCommand;
+    private IRelayCommand _openSearchCommand;
     private IRelayCommand _searchCommand;
+    public IRelayCommand ClearSearchCommand => _clearSearchCommand ??= new RelayCommand(ClearSearchBox);
     public IRelayCommand CloseCommand => _closeCommand ??= new RelayCommand(Close);
     public IRelayCommand MaximizeCommand => _maximizeCommand ??= new RelayCommand(Maximize);
     public IRelayCommand MinimizeCommand => _minimizeCommand ??= new RelayCommand(Minimize);
+    public IRelayCommand OpenConversationSearchCommand => _openConversationSearchCommand ??= new RelayCommand(OpenConversationSearchBox);
+
+    public IRelayCommand OpenSearchCommand => _openSearchCommand ??= new RelayCommand(OpenSearchBox);
+
     public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(Search);
+
+    public void OpenConversationSearchBox() => ConversationVM.IsSearchConversationBoxOpen = true;
 
     private void Close()
     {
@@ -147,6 +174,22 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     #endregion Commands
 
     #region Logics
+
+    public void ClearSearchBox()
+    {
+        if (!string.IsNullOrEmpty(SearchText))
+        {
+            SearchText = string.Empty;
+        }
+        else
+        {
+            CloseSearchBox();
+        }
+    }
+
+    public void CloseSearchBox() => IsSearchBoxOpen = false;
+
+    public void OpenSearchBox() => IsSearchBoxOpen = true;
 
     private void Search()
     {

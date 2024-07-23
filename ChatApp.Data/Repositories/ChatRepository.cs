@@ -6,16 +6,16 @@ namespace ChatApp.Data.Repositories;
 
 public class ChatRepository : IChatRepository
 {
-    private readonly IDbConnectionFactory _connectionFactory;
+    private readonly IDbConnectionFactory _connection;
 
     public ChatRepository(IDbConnectionFactory connectionFactory)
     {
-        _connectionFactory = connectionFactory;
+        _connection = connectionFactory;
     }
 
     public async Task<int> AddConversationAsync(ChatConversationEntity conversation)
     {
-        using var connection = _connectionFactory.CreateConnection();
+        using var connection = _connection.CreateConnection();
         return await connection.ExecuteAsync(@"
                 INSERT INTO conversations (ContactName, ReceivedMessage, MsgReceivedOn, SentMessage, MsgSentOn, IsMessageReceived)
                 VALUES (@ContactName, @ReceivedMessage, @MsgReceivedOn, @SentMessage, @MsgSentOn, @IsMessageReceived)",
@@ -24,7 +24,7 @@ public class ChatRepository : IChatRepository
 
     public async Task<bool> DeleteConversationAsync(int id)
     {
-        using var connection = _connectionFactory.CreateConnection();
+        using var connection = _connection.CreateConnection();
         int affectedRows = await connection.ExecuteAsync(
             "DELETE FROM conversations WHERE Id = @Id", new { Id = id });
         return affectedRows > 0;
@@ -32,21 +32,21 @@ public class ChatRepository : IChatRepository
 
     public async Task<IEnumerable<ChatConversationEntity>> GetAllConversationsAsync()
     {
-        using var connection = _connectionFactory.CreateConnection();
+        using var connection = _connection.CreateConnection();
         return await connection.QueryAsync<ChatConversationEntity>(
             "SELECT * FROM conversations");
     }
 
     public async Task<ChatConversationEntity> GetConversationByIdAsync(int id)
     {
-        using var connection = _connectionFactory.CreateConnection();
+        using var connection = _connection.CreateConnection();
         return await connection.QuerySingleOrDefaultAsync<ChatConversationEntity>(
             "SELECT * FROM conversations WHERE Id = @Id", new { Id = id });
     }
 
     public async Task<IEnumerable<ChatConversationEntity>> GetConversationsByContactNameAsync(string contactName)
     {
-        using var connection = _connectionFactory.CreateConnection();
+        using var connection = _connection.CreateConnection();
         return await connection.QueryAsync<ChatConversationEntity>(
             "SELECT * FROM conversations WHERE ContactName = @ContactName",
             new { ContactName = contactName });
@@ -54,7 +54,7 @@ public class ChatRepository : IChatRepository
 
     public async Task<DateTime?> GetLastMessageTimeAsync(string contactName)
     {
-        using var connection = _connectionFactory.CreateConnection();
+        using var connection = _connection.CreateConnection();
         return await connection.ExecuteScalarAsync<DateTime?>(
             "SELECT TOP 1 MsgSentOn FROM conversations WHERE ContactName = @ContactName",
             new { ContactName = contactName });
@@ -62,7 +62,7 @@ public class ChatRepository : IChatRepository
 
     public async Task<IEnumerable<ChatConversationEntity>> GetRecentConversationsAsync(int count)
     {
-        using var connection = _connectionFactory.CreateConnection();
+        using var connection = _connection.CreateConnection();
         return await connection.QueryAsync<ChatConversationEntity>(
             "SELECT TOP (@Count) * FROM conversations",
             new { Count = count });
@@ -70,14 +70,14 @@ public class ChatRepository : IChatRepository
 
     public async Task<int> GetTotalMessageCountAsync()
     {
-        using var connection = _connectionFactory.CreateConnection();
+        using var connection = _connection.CreateConnection();
         return await connection.ExecuteScalarAsync<int>(
             "SELECT COUNT(*) FROM conversations");
     }
 
     public async Task<bool> UpdateConversationAsync(ChatConversationEntity conversation)
     {
-        using var connection = _connectionFactory.CreateConnection();
+        using var connection = _connection.CreateConnection();
         int affectedRows = await connection.ExecuteAsync(@"
                 UPDATE conversations
                 SET ContactName = @ContactName,

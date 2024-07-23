@@ -1,8 +1,8 @@
 ﻿<UserControl
     x:Class="ChatApp.CustomControls.Conversation"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     Width="auto"
@@ -193,6 +193,17 @@
             CornerRadius="15"
             FocusManager.FocusedElement="{Binding ElementName=searchQuery}">
 
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSearchConversationBoxOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=False}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
             <TextBox
                 x:Name="searchQuery"
                 Padding="12,0"
@@ -203,6 +214,7 @@
                 Text="{Binding SearchConversationText, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Return" Command="{Binding SearchConversationCommand}" />
+                    <KeyBinding Key="Esc" Command="{Binding ClearConversationSearchCommand}" />
                 </TextBox.InputBindings>
             </TextBox>
         </Border>

@@ -11,6 +11,7 @@ using Toolkit.Wpf.Mvvm.ComponentModel;
 using Toolkit.Wpf.Mvvm.Input;
 using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
 using ChatApp.EventArgs;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace ChatApp.ViewModels;
 
@@ -18,8 +19,8 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
 {
     #region Fields
 
-    private IChatService _chatService;
     private IChatListViewModel _chatListVM;
+    private IChatService _chatService;
     private ObservableCollection<ChatConversation> _conversations;
     private IEventAggregator _eventAggregator;
     private ObservableCollection<ChatConversation> _filteredConversations;
@@ -27,6 +28,12 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
     #endregion Fields
 
     #region Properties
+
+    private bool _isSearchConversationBoxOpen;
+
+    private string _lastSearchConversationText;
+
+    private string _searchConversationText;
 
     public ObservableCollection<ChatConversation> Conversations
     {
@@ -50,8 +57,20 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         set => SetProperty(ref _filteredConversations, value);
     }
 
-    private string _lastSearchConversationText;
-    private string _searchConversationText;
+    public bool IsSearchConversationBoxOpen
+    {
+        get => _isSearchConversationBoxOpen;
+        set
+        {
+            if (SetProperty(ref _isSearchConversationBoxOpen, value))
+            {
+                if (_isSearchConversationBoxOpen == false)
+                {
+                    SearchConversationText = string.Empty;
+                }
+            }
+        }
+    }
 
     public string SearchConversationText
     {
@@ -91,7 +110,36 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
 
     #endregion Ctors
 
+    #region Commands
+
+    private IRelayCommand _clearConversationSearchCommand;
+    private IRelayCommand _searchConversationCommand;
+    public IRelayCommand ClearConversationSearchCommand => _clearConversationSearchCommand ??= new RelayCommand(ClearConversationSearchBox);
+    public IRelayCommand SearchConversationCommand => _searchConversationCommand ??= new RelayCommand(SearchConversation);
+
+    #endregion Commands
+
     #region Logics
+
+    public void ClearConversationSearchBox()
+    {
+        if (!string.IsNullOrEmpty(SearchConversationText))
+        {
+            SearchConversationText = string.Empty;
+        }
+        else
+        {
+            CloseConversationSearchBox();
+        }
+    }
+
+    public void CloseConversationSearchBox() => IsSearchConversationBoxOpen = false;
+
+    private bool ContainsText(string source, string searchText)
+    {
+        return !string.IsNullOrEmpty(source)
+            && source.Contains(searchText, StringComparison.CurrentCultureIgnoreCase);
+    }
 
     private async Task LoadChatConversation(ChatListData chat)
     {
@@ -109,6 +157,18 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         {
             Debug.WriteLine($"Error loading chat conversations: {ex.Message}");
         }
+    }
+
+    private bool MatchesSearch(ChatConversation chat, string searchText)
+    {
+        if (string.IsNullOrEmpty(searchText))
+            return true;
+
+        return ContainsText(chat.ReceivedMessage, searchText)
+            || ContainsText(chat.SentMessage, searchText)
+            || ContainsText(chat.ContactName, searchText)
+            || ContainsText(chat.MsgReceivedOn, searchText)
+            || ContainsText(chat.MsgSentOn, searchText);
     }
 
     private void SearchConversation()
@@ -137,31 +197,5 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         _lastSearchConversationText = SearchConversationText;
     }
 
-    private bool MatchesSearch(ChatConversation chat, string searchText)
-    {
-        if (string.IsNullOrEmpty(searchText))
-            return true;
-
-        return ContainsText(chat.ReceivedMessage, searchText)
-            || ContainsText(chat.SentMessage, searchText)
-            || ContainsText(chat.ContactName, searchText)
-            || ContainsText(chat.MsgReceivedOn, searchText)
-            || ContainsText(chat.MsgSentOn, searchText);
-    }
-
-    private bool ContainsText(string source, string searchText)
-    {
-        return !string.IsNullOrEmpty(source)
-            && source.Contains(searchText, StringComparison.CurrentCultureIgnoreCase);
-    }
-
     #endregion Logics
-
-    #region Commands
-
-    private IRelayCommand _searchConversationCommand;
-
-    public IRelayCommand SearchConversationCommand => _searchConversationCommand ??= new RelayCommand(SearchConversation);
-
-    #endregion Commands
 }
