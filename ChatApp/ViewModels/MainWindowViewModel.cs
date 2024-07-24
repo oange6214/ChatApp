@@ -104,12 +104,35 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
     #region Properties
 
+    private bool _focusMessageBox;
     private bool _isContactInfoOpen;
+
+    private bool _isThisAReplyMessage;
+
+    private string _messageToReplyText;
+
+    public bool FocusMessageBox
+    {
+        get => _focusMessageBox;
+        set => SetProperty(ref _focusMessageBox, value);
+    }
 
     public bool IsContactInfoOpen
     {
         get => _isContactInfoOpen;
         set => SetProperty(ref _isContactInfoOpen, value);
+    }
+
+    public bool IsThisAReplyMessage
+    {
+        get => _isThisAReplyMessage;
+        set => SetProperty(ref _isThisAReplyMessage, value);
+    }
+
+    public string MessageToReplyText
+    {
+        get => _messageToReplyText;
+        set => SetProperty(ref _messageToReplyText, value);
     }
 
     #endregion Properties
@@ -146,23 +169,32 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
         ChatListVM = chatListVM;
         ConversationVM = conversationVM;
 
-        _eventAggregator.Subscribe<ChatSelectedEventArgs>(OnChatSelected);
+        _eventAggregator.Subscribe<ChatSelectedEventArgs>(OnChatSelectedEvent);
+        _eventAggregator.Subscribe<ReplyMessageEventArgs>(OnReplyMessageEvent);
     }
 
     #endregion Ctors
 
     #region Event Aggregator Methods
 
-    private void OnChatSelected(ChatSelectedEventArgs evt)
+    private void OnChatSelectedEvent(ChatSelectedEventArgs evt)
     {
         ContactName = evt.ContactName;
         ContactPhoto = evt.ContactPhoto;
+    }
+
+    private void OnReplyMessageEvent(ReplyMessageEventArgs args)
+    {
+        FocusMessageBox = args.FocusMessageBox;
+        MessageToReplyText = args.MessageToReplyText;
+        IsThisAReplyMessage = args.IsThisAReplyMessage;
     }
 
     #endregion Event Aggregator Methods
 
     #region Commands
 
+    private IRelayCommand _cancelReplyCommand;
     private IRelayCommand _clearSearchCommand;
     private IRelayCommand _closeCommand;
     private IRelayCommand _maximizeCommand;
@@ -170,17 +202,44 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     private IRelayCommand _openConversationSearchCommand;
     private IRelayCommand _openSearchCommand;
     private IRelayCommand _searchCommand;
+    public IRelayCommand CancelReplyCommand => _cancelReplyCommand ??= new RelayCommand(CancelReply);
     public IRelayCommand ClearSearchCommand => _clearSearchCommand ??= new RelayCommand(ClearSearchBox);
     public IRelayCommand CloseCommand => _closeCommand ??= new RelayCommand(Close);
     public IRelayCommand MaximizeCommand => _maximizeCommand ??= new RelayCommand(Maximize);
     public IRelayCommand MinimizeCommand => _minimizeCommand ??= new RelayCommand(Minimize);
     public IRelayCommand OpenConversationSearchCommand => _openConversationSearchCommand ??= new RelayCommand(OpenConversationSearchBox);
-
     public IRelayCommand OpenSearchCommand => _openSearchCommand ??= new RelayCommand(OpenSearchBox);
-
     public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(Search);
 
+    #endregion Commands
+
+    #region Logics
+
+    public void CancelReply()
+    {
+        IsThisAReplyMessage = false;
+
+        // Reset Reply Message Text
+        MessageToReplyText = string.Empty;
+    }
+
+    public void ClearSearchBox()
+    {
+        if (!string.IsNullOrEmpty(SearchText))
+        {
+            SearchText = string.Empty;
+        }
+        else
+        {
+            CloseSearchBox();
+        }
+    }
+
+    public void CloseSearchBox() => IsSearchBoxOpen = false;
+
     public void OpenConversationSearchBox() => ConversationVM.IsSearchConversationBoxOpen = true;
+
+    public void OpenSearchBox() => IsSearchBoxOpen = true;
 
     private void Close()
     {
@@ -203,26 +262,6 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     {
         WindowState = WindowState.Minimized;
     }
-
-    #endregion Commands
-
-    #region Logics
-
-    public void ClearSearchBox()
-    {
-        if (!string.IsNullOrEmpty(SearchText))
-        {
-            SearchText = string.Empty;
-        }
-        else
-        {
-            CloseSearchBox();
-        }
-    }
-
-    public void CloseSearchBox() => IsSearchBoxOpen = false;
-
-    public void OpenSearchBox() => IsSearchBoxOpen = true;
 
     private void Search()
     {

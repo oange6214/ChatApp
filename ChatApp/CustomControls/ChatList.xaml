@@ -199,7 +199,7 @@
                                                         <DoubleAnimation
                                                             Storyboard.TargetName="OptionsGrid"
                                                             Storyboard.TargetProperty="Height"
-                                                            To="40" />
+                                                            To="50" />
                                                         <ColorAnimation
                                                             Storyboard.TargetProperty="(Background).Color"
                                                             From="Transparent"
@@ -209,7 +209,7 @@
                                             </Trigger.EnterActions>
                                             <Trigger.ExitActions>
                                                 <BeginStoryboard>
-                                                    <Storyboard SpeedRatio="8">
+                                                    <Storyboard SpeedRatio="5">
                                                         <DoubleAnimation
                                                             Storyboard.TargetName="OptionsGrid"
                                                             Storyboard.TargetProperty="Height"
@@ -226,7 +226,7 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Trigger.EnterActions>
                                                 <BeginStoryboard>
-                                                    <Storyboard SpeedRatio="8">
+                                                    <Storyboard SpeedRatio="5">
 
                                                         <ColorAnimation
                                                             Storyboard.TargetName="bdChild"

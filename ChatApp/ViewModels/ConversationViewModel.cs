@@ -113,8 +113,28 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
     #region Commands
 
     private IRelayCommand _clearConversationSearchCommand;
+    private IRelayCommand _relayCommand;
     private IRelayCommand _searchConversationCommand;
     public IRelayCommand ClearConversationSearchCommand => _clearConversationSearchCommand ??= new RelayCommand(ClearConversationSearchBox);
+
+    public IRelayCommand RelayCommand => _relayCommand ??= new RelayCommand<ChatConversation>(data =>
+    {
+        if (data == null)
+            return;
+
+        _eventAggregator.Publish(new ReplyMessageEventArgs
+        {
+            // If replying sender's message, else if replying own message
+            MessageToReplyText = data.IsMessageReceived ? data.ReceivedMessage : data.SentMessage,
+
+            // Set focus on Message box whne user clicks reply button
+            FocusMessageBox = true,
+
+            // Flag this message as reply message
+            IsThisAReplyMessage = true
+        });
+    });
+
     public IRelayCommand SearchConversationCommand => _searchConversationCommand ??= new RelayCommand(SearchConversation);
 
     #endregion Commands
@@ -157,6 +177,12 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         {
             Debug.WriteLine($"Error loading chat conversations: {ex.Message}");
         }
+
+        // Reset reply message text when the new chat is fetched.
+        _eventAggregator.Publish(new ReplyMessageEventArgs
+        {
+            MessageToReplyText = string.Empty
+        });
     }
 
     private bool MatchesSearch(ChatConversation chat, string searchText)
