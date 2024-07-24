@@ -100,6 +100,39 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
     #endregion Properties
 
+    #region ContactInfo
+
+    #region Properties
+
+    private bool _isContactInfoOpen;
+
+    public bool IsContactInfoOpen
+    {
+        get => _isContactInfoOpen;
+        set => SetProperty(ref _isContactInfoOpen, value);
+    }
+
+    #endregion Properties
+
+    #region Logics
+
+    public void CloseContactInfo() => IsContactInfoOpen = false;
+
+    public void OpenContactInfo() => IsContactInfoOpen = true;
+
+    #endregion Logics
+
+    #region Commands
+
+    private IRelayCommand _closeContactInfoCommand;
+    private IRelayCommand _openContactInfoCommand;
+    public IRelayCommand CloseContactInfoCommand => _closeContactInfoCommand ??= new RelayCommand(CloseContactInfo);
+    public IRelayCommand OpenContactInfoCommand => _openContactInfoCommand ??= new RelayCommand(OpenContactInfo);
+
+    #endregion Commands
+
+    #endregion ContactInfo
+
     #region Ctors
 
     public MainWindowViewModel(
