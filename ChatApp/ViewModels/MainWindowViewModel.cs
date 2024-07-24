@@ -202,6 +202,7 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     private IRelayCommand _openConversationSearchCommand;
     private IRelayCommand _openSearchCommand;
     private IRelayCommand _searchCommand;
+    private IRelayCommand _sendMessageCommand;
     public IRelayCommand CancelReplyCommand => _cancelReplyCommand ??= new RelayCommand(CancelReply);
     public IRelayCommand ClearSearchCommand => _clearSearchCommand ??= new RelayCommand(ClearSearchBox);
     public IRelayCommand CloseCommand => _closeCommand ??= new RelayCommand(Close);
@@ -210,10 +211,37 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     public IRelayCommand OpenConversationSearchCommand => _openConversationSearchCommand ??= new RelayCommand(OpenConversationSearchBox);
     public IRelayCommand OpenSearchCommand => _openSearchCommand ??= new RelayCommand(OpenSearchBox);
     public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(Search);
+    public IRelayCommand SendMessageCommand => _sendMessageCommand ??= new RelayCommand(SendMessage);
 
     #endregion Commands
 
     #region Logics
+
+    public void SendMessage()
+    {
+        // Send message only when the textbox is not empty..
+
+        if (!string.IsNullOrEmpty(MessageText))
+        {
+            var conversation = new ChatConversation
+            {
+                ReceivedMessage = MessageToReplyText,
+                SentMessage = MessageText,
+                MsgSentOn = DateTime.Now.ToString("MMM dd, hh:mm tt"),
+                MessageContainsReply = IsThisAReplyMessage
+            };
+
+            // Add message to conversation list.
+            _eventAggregator.Publish(conversation);
+
+            // Clear Mesage properties and textbox when message is sent.
+            MessageText = string.Empty;
+            MessageToReplyText = string.Empty;
+            IsThisAReplyMessage = false;
+
+            // TODO: Add Function to Move the chat contact on top when new message is sent or received.
+        }
+    }
 
     public void CancelReply()
     {

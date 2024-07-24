@@ -101,6 +101,13 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         _chatListVM = chatListVM;
 
         _eventAggregator.Subscribe<ChatListDataEventArgs>(OnChatListDataEvent);
+        _eventAggregator.Subscribe<ChatConversation>(OnChatConversationEvent);
+    }
+
+    private void OnChatConversationEvent(ChatConversation conversation)
+    {
+        FilteredConversations.Add(conversation);
+        Conversations.Add(conversation);
     }
 
     private async void OnChatListDataEvent(ChatListDataEventArgs chatEvent)

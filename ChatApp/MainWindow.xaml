@@ -433,7 +433,8 @@
                                 VerticalContentAlignment="Center"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                Text="{Binding MessageText}">
+                                Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}">
+
                                 <!--  Set Focus on MessageBox when FocusMessageBox = true  -->
                                 <TextBox.Style>
                                     <Style TargetType="{x:Type TextBox}">
@@ -444,6 +445,11 @@
                                         </Style.Triggers>
                                     </Style>
                                 </TextBox.Style>
+
+                                <!--  Key Binding to Send Message on 'Enter' key press  -->
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Return" Command="{Binding SendMessageCommand}" />
+                                </TextBox.InputBindings>
                             </TextBox>
 
                             <!--  Attachment Button & Send Message Button  -->
@@ -459,6 +465,7 @@
                                     Style="{StaticResource IconButtonStyle}" />
                                 <Button
                                     x:Name="SendMsgButton"
+                                    Command="{Binding SendMessageCommand}"
                                     Content="{StaticResource send}"
                                     Style="{StaticResource IconButtonStyle}" />
                             </StackPanel>
