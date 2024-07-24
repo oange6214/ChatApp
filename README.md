@@ -1,3 +1,9 @@
+Dependency library:
+- Dapper
+- AutoMapper
+- Microsoft.Extensions.Hosting
+- Microsoft.Xaml.Behaviors.Wpf
+
 # ChatApp
 
 UI have:
