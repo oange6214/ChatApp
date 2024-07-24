@@ -1,8 +1,9 @@
 ﻿<UserControl
     x:Class="ChatApp.CustomControls.ChatList"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     x:Name="_Chats"
@@ -254,6 +255,15 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!--  Animation on chat item add  -->
+        <ItemsPanelTemplate x:Key="dtItemPanel">
+            <StackPanel>
+                <b:Interaction.Behaviors>
+                    <b:FluidMoveBehavior AppliesTo="Children" Duration="0:0:0.25" />
+                </b:Interaction.Behaviors>
+            </StackPanel>
+        </ItemsPanelTemplate>
     </UserControl.Resources>
 
     <!--  TODO: Scroll Bar style  -->
@@ -320,6 +330,7 @@
                     <ItemsControl
                         Padding="15,0"
                         ItemTemplate="{StaticResource ChatButtonItemTemplate}"
+                        ItemsPanel="{StaticResource dtItemPanel}"
                         ItemsSource="{Binding FilteredPinnedChats}" />
                 </StackPanel>
 
@@ -341,6 +352,7 @@
                     <ItemsControl
                         Padding="15,0"
                         ItemTemplate="{StaticResource ChatButtonItemTemplate}"
+                        ItemsPanel="{StaticResource dtItemPanel}"
                         ItemsSource="{Binding FilteredChats}" />
 
                     <RadioButton
@@ -383,6 +395,7 @@
                     Background="Transparent"
                     BorderThickness="0"
                     ItemTemplate="{StaticResource ChatButtonItemTemplate}"
+                    ItemsPanel="{StaticResource dtItemPanel}"
                     ItemsSource="{Binding ArchivedChats}" />
             </StackPanel>
         </Grid>
