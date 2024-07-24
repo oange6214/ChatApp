@@ -1,5 +1,11 @@
 # ChatApp
 
+UI have:
+- Chat list
+- Contact info
+- Conversation
+- Status thumbs
+
 # ChatApp.Data
 Data process layer
 - Dapper
