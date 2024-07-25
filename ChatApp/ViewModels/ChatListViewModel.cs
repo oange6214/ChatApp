@@ -27,6 +27,8 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
 
     #region Properties
 
+    private int _chatPosition;
+
     public ObservableCollection<ChatListItem> ArchivedChats
     {
         get => _archivedChats;
@@ -285,6 +287,9 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
             FilteredPinnedChats.Add(data);
             data.IsPinned = true;
 
+            // Store position of chat before pinning so that when we unpin or un archive we get it on same original position...
+            _chatPosition = Chats.IndexOf(data);
+
             // Remove selected chat from all chats / unpinned chats
             Chats.Remove(data);
             FilteredChats.Remove(data);
@@ -324,6 +329,10 @@ public class ChatListViewModel : ObservableObject, IChatListViewModel
             // Add selected chat to Normal Unpinned chat list
             Chats.Add(data);
             FilteredChats.Add(data);
+
+            // Restore position of chat before pinning so that when we unpin or un archive we get it on same original position...
+            Chats.Move(Chats.Count - 1, _chatPosition);
+            FilteredChats.Move(Chats.Count - 1, _chatPosition);
 
             // Remove selected pinned chats list
             PinnedChats.Remove(data);
