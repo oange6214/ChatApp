@@ -2,6 +2,7 @@
     x:Class="ChatApp.CustomControls.Conversation"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ap="clr-namespace:ChatApp.AttachedProperties"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -252,9 +253,9 @@
         </Border>
 
         <!--  Body  -->
-        <!--  TODO: Add attachedProperty to Auto-Scroll to bottom  -->
         <ScrollViewer
             Grid.Row="1"
+            ap:ScrollViewerAttachedProperty.AutoScroll="true"
             Background="WhiteSmoke"
             HorizontalScrollBarVisibility="Disabled">
 
