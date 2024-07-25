@@ -1,5 +1,6 @@
 ﻿using ChatApp.Data.Entities;
 using ChatApp.Data.Interfaces;
+using ChatApp.Domain.Models;
 using Dapper;
 
 namespace ChatApp.Data.Repositories;
@@ -13,81 +14,32 @@ public class ChatRepository : IChatRepository
         _connection = connectionFactory;
     }
 
-    public async Task<int> AddConversationAsync(ChatConversationEntity conversation)
-    {
-        using var connection = _connection.CreateConnection();
-        return await connection.ExecuteAsync(@"
-                INSERT INTO conversations (ContactName, ReceivedMessage, MsgReceivedOn, SentMessage, MsgSentOn, IsMessageReceived)
-                VALUES (@ContactName, @ReceivedMessage, @MsgReceivedOn, @SentMessage, @MsgSentOn, @IsMessageReceived)",
-            conversation);
-    }
-
-    public async Task<bool> DeleteConversationAsync(int id)
-    {
-        using var connection = _connection.CreateConnection();
-        int affectedRows = await connection.ExecuteAsync(
-            "DELETE FROM conversations WHERE Id = @Id", new { Id = id });
-        return affectedRows > 0;
-    }
-
-    public async Task<IEnumerable<ChatConversationEntity>> GetAllConversationsAsync()
-    {
-        using var connection = _connection.CreateConnection();
-        return await connection.QueryAsync<ChatConversationEntity>(
-            "SELECT * FROM conversations");
-    }
-
-    public async Task<ChatConversationEntity> GetConversationByIdAsync(int id)
-    {
-        using var connection = _connection.CreateConnection();
-        return await connection.QuerySingleOrDefaultAsync<ChatConversationEntity>(
-            "SELECT * FROM conversations WHERE Id = @Id", new { Id = id });
-    }
-
     public async Task<IEnumerable<ChatConversationEntity>> GetConversationsByContactNameAsync(string contactName)
     {
+        string sql = @"SELECT * FROM conversations WHERE ContactName = @ContactName";
+        object args = new { ContactName = contactName };
+
         using var connection = _connection.CreateConnection();
-        return await connection.QueryAsync<ChatConversationEntity>(
-            "SELECT * FROM conversations WHERE ContactName = @ContactName",
-            new { ContactName = contactName });
+
+        return await connection.QueryAsync<ChatConversationEntity>(sql, args);
     }
 
-    public async Task<DateTime?> GetLastMessageTimeAsync(string contactName)
-    {
-        using var connection = _connection.CreateConnection();
-        return await connection.ExecuteScalarAsync<DateTime?>(
-            "SELECT TOP 1 MsgSentOn FROM conversations WHERE ContactName = @ContactName",
-            new { ContactName = contactName });
-    }
+    //public async Task<IEnumerable<ChatListItem>> GetContactAsync()
+    //{
+    //    const string sql = @"
+    //                SELECT *
+    //                FROM contacts p
+    //                LEFT JOIN
+    //                 (
+    //                  SELECT a.*, ROW_NUMBER()
+    //                   OVER(PARTITION BY a.contactname ORDER BY a.id DESC) AS seqnum
+    //                  FROM conversations a
+    //                 ) a
+    //                 ON a.ContactName = p.contactname AND a.seqnum = 1
+    //                ORDER BY a.Id DESC
+    //            ";
 
-    public async Task<IEnumerable<ChatConversationEntity>> GetRecentConversationsAsync(int count)
-    {
-        using var connection = _connection.CreateConnection();
-        return await connection.QueryAsync<ChatConversationEntity>(
-            "SELECT TOP (@Count) * FROM conversations",
-            new { Count = count });
-    }
-
-    public async Task<int> GetTotalMessageCountAsync()
-    {
-        using var connection = _connection.CreateConnection();
-        return await connection.ExecuteScalarAsync<int>(
-            "SELECT COUNT(*) FROM conversations");
-    }
-
-    public async Task<bool> UpdateConversationAsync(ChatConversationEntity conversation)
-    {
-        using var connection = _connection.CreateConnection();
-        int affectedRows = await connection.ExecuteAsync(@"
-                UPDATE conversations
-                SET ContactName = @ContactName,
-                    ReceivedMessage = @ReceivedMessage,
-                    MsgReceivedOn = @MsgReceivedOn,
-                    SentMessage = @SentMessage,
-                    MsgSentOn = @MsgSentOn,
-                    IsMessageReceived = @IsMessageReceived
-                WHERE Id = @Id",
-            conversation);
-        return affectedRows > 0;
-    }
+    //    using var connection = _connection.CreateConnection();
+    //    connection.Query<ContactEntity, ChatConversationEntity>(sql);
+    //}
 }

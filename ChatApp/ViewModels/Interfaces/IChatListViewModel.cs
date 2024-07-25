@@ -5,8 +5,9 @@ namespace ChatApp.ViewModels.Interfaces;
 
 public interface IChatListViewModel
 {
-    ObservableCollection<ChatListData> Chats { get; set; }
-    ObservableCollection<ChatListData> FilteredChats { get; set; }
-    ObservableCollection<ChatListData> FilteredPinnedChats { get; set; }
-    ObservableCollection<ChatListData> PinnedChats { get; set; }
+    ObservableCollection<ChatListItem> Chats { get; set; }
+    ObservableCollection<ChatListItem> FilteredChats { get; set; }
+    ObservableCollection<ChatListItem> FilteredPinnedChats { get; set; }
+    ObservableCollection<ChatListItem> PinnedChats { get; set; }
+    ObservableCollection<ChatListItem> ArchivedChats { get; set; }
 }

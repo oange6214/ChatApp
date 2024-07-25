@@ -91,6 +91,10 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
 
     #region Ctors
 
+    public ConversationViewModel()
+    {
+    }
+
     public ConversationViewModel(
         IEventAggregator eventAggregator,
         IChatService chatService,
@@ -134,7 +138,7 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
             // If replying sender's message, else if replying own message
             MessageToReplyText = data.IsMessageReceived ? data.ReceivedMessage : data.SentMessage,
 
-            // Set focus on Message box whne user clicks reply button
+            // Set focus on LastMessage box whne user clicks reply button
             FocusMessageBox = true,
 
             // Flag this message as reply message
@@ -168,7 +172,7 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
             && source.Contains(searchText, StringComparison.CurrentCultureIgnoreCase);
     }
 
-    private async Task LoadChatConversation(ChatListData chat)
+    private async Task LoadChatConversation(ChatListItem chat)
     {
         Conversations ??= [];
 
@@ -178,6 +182,13 @@ public class ConversationViewModel : ObservableObject, IConversationViewModel
         try
         {
             var conversations = await _chatService.GetConversationsByContactNameAsync(chat.ContactName);
+
+            if (conversations.Count() > 0)
+            {
+                var conversation = conversations.LastOrDefault();
+                chat.LastMessage = !string.IsNullOrEmpty(conversation.ReceivedMessage) ? conversation.ReceivedMessage : conversation.SentMessage;
+            }
+
             Conversations = new ObservableCollection<ChatConversation>(conversations);
         }
         catch (Exception ex)

@@ -2,11 +2,11 @@
 
 public class ChatConversation
 {
-    public string ContactName { get; set; }
-    public string ReceivedMessage { get; set; }
-    public string MsgReceivedOn { get; set; }
-    public string SentMessage { get; set; }
-    public string MsgSentOn { get; set; }
+    public string ContactName { get; set; } = string.Empty;
     public bool IsMessageReceived { get; set; }
     public bool MessageContainsReply { get; set; }
+    public string MsgReceivedOn { get; set; } = string.Empty;
+    public string MsgSentOn { get; set; } = string.Empty;
+    public string ReceivedMessage { get; set; } = string.Empty;
+    public string SentMessage { get; set; } = string.Empty;
 }

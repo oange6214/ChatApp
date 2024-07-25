@@ -8,7 +8,8 @@
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     Width="0"
     MaxWidth="406"
-    d:DataContext="{d:DesignInstance viewmodels:MainWindowViewModel}"
+    d:DataContext="{d:DesignInstance viewmodels:MainWindowViewModel,
+                                     IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 
     <UserControl.Style>
@@ -95,7 +96,7 @@
                     Stroke="#49A078"
                     StrokeThickness="2">
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding ContactPhoto, FallbackValue={StaticResource DefaultImage}, TargetNullValue={StaticResource DefaultImage}}" Stretch="UniformToFill" />
+                        <ImageBrush ImageSource="{Binding ContactPhotoUri, FallbackValue={StaticResource DefaultImage}, TargetNullValue={StaticResource DefaultImage}}" Stretch="UniformToFill" />
                     </Ellipse.Fill>
                 </Ellipse>
 

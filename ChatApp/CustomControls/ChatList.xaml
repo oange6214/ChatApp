@@ -5,10 +5,12 @@
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:ChatApp.Domain.Models;assembly=ChatApp.Domain"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     x:Name="ChatListUserControl"
     MinWidth="406"
-    d:DataContext="{d:DesignInstance viewmodels:ChatListViewModel}"
+    d:DataContext="{d:DesignInstance viewmodels:ChatListViewModel,
+                                     IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -26,8 +28,8 @@
                         <Setter Property="Command" Value="{Binding DataContext.GetSelectedChatCommand, ElementName=ChatListUserControl, UpdateSourceTrigger=PropertyChanged}" />
                         <Setter Property="CommandParameter" Value="{Binding}" />
                         <Setter Property="Content" Value="{Binding ContactName}" />
+                        <!--<Setter Property="IsChecked" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
 
-                        <!--<Setter Property="IsChecked" Value="{Binding ChatIsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -63,7 +65,7 @@
                                                     <!--  Profile Photo  -->
                                                     <ColumnDefinition Width="auto" />
 
-                                                    <!--  Contact Name & Message  -->
+                                                    <!--  Contact Name & Last Message  -->
                                                     <ColumnDefinition />
 
                                                     <!--  Last Message Time  -->
@@ -73,18 +75,18 @@
                                                 <!--  Profile Photo  -->
                                                 <Ellipse Width="50" Height="50">
                                                     <Ellipse.Fill>
-                                                        <ImageBrush ImageSource="{Binding ContactPhoto, TargetNullValue={StaticResource DefaultImage}, FallbackValue={StaticResource DefaultImage}, UpdateSourceTrigger=PropertyChanged}" Stretch="UniformToFill" />
+                                                        <ImageBrush ImageSource="{Binding ContactPhotoUri, TargetNullValue={StaticResource DefaultImage}, FallbackValue={StaticResource DefaultImage}, UpdateSourceTrigger=PropertyChanged}" Stretch="UniformToFill" />
                                                     </Ellipse.Fill>
                                                 </Ellipse>
 
-                                                <!--#region Contact Name & Message-->
+                                                <!--#region Contact Name & Last Message-->
 
                                                 <Grid Grid.Column="1" Margin="20,0">
                                                     <Grid.RowDefinitions>
                                                         <!--  Name  -->
                                                         <RowDefinition />
 
-                                                        <!--  Message  -->
+                                                        <!--  Last Message  -->
                                                         <RowDefinition />
                                                     </Grid.RowDefinitions>
 
@@ -102,7 +104,10 @@
                                                         </TextBlock.Style>
                                                     </TextBlock>
 
-                                                    <TextBlock Grid.Row="1" Text="{Binding Message}">
+                                                    <TextBlock
+                                                        Grid.Row="1"
+                                                        Text="{Binding LastMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                        TextTrimming="CharacterEllipsis">
                                                         <TextBlock.Style>
                                                             <Style TargetType="{x:Type TextBlock}">
                                                                 <Setter Property="FontWeight" Value="Normal" />
@@ -151,7 +156,7 @@
 
                                                                     <!--  Style when Chat is pinned  -->
                                                                     <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding ChatIsPinned}" Value="True">
+                                                                        <DataTrigger Binding="{Binding IsPinned}" Value="True">
                                                                             <Setter Property="Content" Value="{StaticResource unpin}" />
                                                                             <Setter Property="Command" Value="{Binding DataContext.UnPinChatCommand, ElementName=ChatListUserControl}" />
                                                                         </DataTrigger>
@@ -172,7 +177,7 @@
 
                                                                     <!--  Style when Chat is pinned  -->
                                                                     <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding ChatIsArchived}" Value="True">
+                                                                        <DataTrigger Binding="{Binding IsArchived}" Value="True">
                                                                             <Setter Property="Content" Value="{StaticResource unarchive}" />
                                                                             <Setter Property="Command" Value="{Binding DataContext.UnArchiveChatCommand, ElementName=ChatListUserControl}" />
                                                                         </DataTrigger>
@@ -329,8 +334,8 @@
         </ItemsPanelTemplate>
     </UserControl.Resources>
 
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-        <Grid Margin="25,15">
+    <ScrollViewer Padding="15" HorizontalScrollBarVisibility="Disabled">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -412,7 +417,7 @@
                     <!--  Filtered Chats List  -->
                     <!--  Since we want to show filtered chats on search  -->
                     <ItemsControl
-                        Padding="15,0"
+                        Padding="15,10"
                         ItemTemplate="{StaticResource ChatButtonItemTemplate}"
                         ItemsPanel="{StaticResource dtItemPanel}"
                         ItemsSource="{Binding FilteredChats}" />

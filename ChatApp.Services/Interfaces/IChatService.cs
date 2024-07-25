@@ -11,4 +11,6 @@ public interface IChatService
     //Task<ChatConversation> GetConversationByIdAsync(int id);
 
     Task<IEnumerable<ChatConversation>> GetConversationsByContactNameAsync(string contactName);
+
+    Task<IEnumerable<ChatConversation>> GetContact();
 }

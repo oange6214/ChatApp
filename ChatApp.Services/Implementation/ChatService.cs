@@ -16,6 +16,11 @@ public class ChatService : IChatService
         _chatRepository = chatRepository;
     }
 
+    public Task<IEnumerable<ChatConversation>> GetContact()
+    {
+        throw new NotImplementedException();
+    }
+
     //public async Task<bool> AddConversationAsync(ChatConversationDto conversation)
     //{
     //    int result = await _chatRepository.AddConversationAsync(conversation);

@@ -45,29 +45,29 @@ public class StatusThumbsViewModel : ObservableObject, IStatusThumbsViewModel
                 new StatusDataModel
                 {
                     ContactName = "Mike",
-                    ContactPhoto = new Uri("/Assets/Images/1.png", UriKind.RelativeOrAbsolute),
-                    StatusImage = new Uri("/Assets/Images/8.jpg", UriKind.RelativeOrAbsolute),
+                    ContactPhotoUri = new Uri("/Assets/Images/1.png", UriKind.RelativeOrAbsolute),
+                    StatusImageUri = new Uri("/Assets/Images/8.jpg", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
                 new StatusDataModel
                 {
                     ContactName = "Steve",
-                    ContactPhoto = new Uri("/Assets/Images/2.jpg", UriKind.RelativeOrAbsolute),
-                    StatusImage = new Uri("/Assets/Images/7.png", UriKind.RelativeOrAbsolute),
+                    ContactPhotoUri = new Uri("/Assets/Images/2.jpg", UriKind.RelativeOrAbsolute),
+                    StatusImageUri = new Uri("/Assets/Images/7.png", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
                 new StatusDataModel
                 {
                     ContactName = "Will",
-                    ContactPhoto = new Uri("/Assets/Images/3.jpg", UriKind.RelativeOrAbsolute),
-                    StatusImage = new Uri("/Assets/Images/6.jpg", UriKind.RelativeOrAbsolute),
+                    ContactPhotoUri = new Uri("/Assets/Images/3.jpg", UriKind.RelativeOrAbsolute),
+                    StatusImageUri = new Uri("/Assets/Images/6.jpg", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
                 new StatusDataModel
                 {
                     ContactName = "John",
-                    ContactPhoto = new Uri("/Assets/Images/4.jpg", UriKind.RelativeOrAbsolute),
-                    StatusImage = new Uri("/Assets/Images/5.jpg", UriKind.RelativeOrAbsolute),
+                    ContactPhotoUri = new Uri("/Assets/Images/4.jpg", UriKind.RelativeOrAbsolute),
+                    StatusImageUri = new Uri("/Assets/Images/5.jpg", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
             ];

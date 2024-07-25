@@ -19,8 +19,9 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
     #region Fields
 
+    private ObservableCollection<MoreOptionMenu> _attachmentOptionsMenuList;
     private string _contactName;
-    private Uri _contactPhoto;
+    private byte[] _contactPhotoUri;
     private IEventAggregator _eventAggregator;
     private bool _isSearchBoxOpen;
     private string _lastSearchText;
@@ -28,12 +29,17 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     private string _messageText;
     private string _searchText;
     private ObservableCollection<MoreOptionMenu> _windowMoreOptionsMenuList;
-    private ObservableCollection<MoreOptionMenu> _attachmentOptionsMenuList;
     private WindowState _windowState;
 
     #endregion Fields
 
     #region Properties
+
+    public ObservableCollection<MoreOptionMenu> AttachmentOptionsMenuList
+    {
+        get => _attachmentOptionsMenuList;
+        set => SetProperty(ref _attachmentOptionsMenuList, value);
+    }
 
     public IChatListViewModel ChatListVM { get; }
 
@@ -43,10 +49,10 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
         set => SetProperty(ref _contactName, value);
     }
 
-    public Uri ContactPhoto
+    public byte[] ContactPhotoUri
     {
-        get => _contactPhoto;
-        set => SetProperty(ref _contactPhoto, value);
+        get => _contactPhotoUri;
+        set => SetProperty(ref _contactPhotoUri, value);
     }
 
     public IConversationViewModel ConversationVM { get; }
@@ -84,12 +90,6 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     {
         get => _windowMoreOptionsMenuList;
         set => SetProperty(ref _windowMoreOptionsMenuList, value);
-    }
-
-    public ObservableCollection<MoreOptionMenu> AttachmentOptionsMenuList
-    {
-        get => _attachmentOptionsMenuList;
-        set => SetProperty(ref _attachmentOptionsMenuList, value);
     }
 
     public WindowState WindowState
@@ -175,6 +175,10 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
     #region Ctors
 
+    public MainWindowViewModel()
+    {
+    }
+
     public MainWindowViewModel(
         IEventAggregator eventAggregator,
         IChatListViewModel chatListVM,
@@ -197,7 +201,7 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     private void OnChatSelectedEvent(ChatSelectedEventArgs evt)
     {
         ContactName = evt.ContactName;
-        ContactPhoto = evt.ContactPhoto;
+        ContactPhotoUri = evt.ContactPhotoUri;
     }
 
     private void OnReplyMessageEvent(ReplyMessageEventArgs args)
@@ -211,6 +215,7 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
     #region Commands
 
+    private IRelayCommand _attachmentOptionsCommand;
     private IRelayCommand _cancelReplyCommand;
     private IRelayCommand _clearSearchCommand;
     private IRelayCommand _closeCommand;
@@ -222,7 +227,7 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     private IRelayCommand _searchCommand;
     private IRelayCommand _sendMessageCommand;
     private IRelayCommand _windowsMoreOptionsCommand;
-    private IRelayCommand _attachmentOptionsCommand;
+    public IRelayCommand AttachmentOptionsCommand => _attachmentOptionsCommand ??= new RelayCommand(AttachmentOptionsMenu);
     public IRelayCommand CancelReplyCommand => _cancelReplyCommand ??= new RelayCommand(CancelReply);
     public IRelayCommand ClearSearchCommand => _clearSearchCommand ??= new RelayCommand(ClearSearchBox);
     public IRelayCommand CloseCommand => _closeCommand ??= new RelayCommand(Close);
@@ -234,13 +239,62 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(Search);
     public IRelayCommand SendMessageCommand => _sendMessageCommand ??= new RelayCommand(SendMessage);
     public IRelayCommand WindowsMoreOptionsCommand => _windowsMoreOptionsCommand ??= new RelayCommand(WindowMoreOptionsMenu);
-    public IRelayCommand AttachmentOptionsCommand => _attachmentOptionsCommand ??= new RelayCommand(AttachmentOptionsMenu);
 
     #endregion Commands
 
     #region Logics
 
     #region Window: More options Popup
+
+    private void AttachmentOptionsMenu()
+    {
+        // To populate menu items for Attachment Menu options list...
+        AttachmentOptionsMenuList =
+        [
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["docs"],
+                MenuText = "Docs",
+                BorderStroke = "#3F3990",
+                Fill = "#CFCEEC"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["camera"],
+                MenuText = "Camera",
+                BorderStroke = "#2C5A71",
+                Fill = "#C5E7F8"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["gallery"],
+                MenuText = "Gallery",
+                BorderStroke = "#EA2140",
+                Fill = "#F7D5AC"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["audio"],
+                MenuText = "Audio",
+                BorderStroke = "#E67E00",
+                Fill = "#F7D5AC"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["location"],
+                MenuText = "Location",
+                BorderStroke = "#28C58F",
+                Fill = "#E3F5EF"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["contact"],
+                MenuText = "Contact",
+                BorderStroke = "#0093E0",
+                Fill = "#DDF1FB"
+            },
+        ];
+    }
 
     private void ConversationScreenMoreOptionsMenu()
     {
@@ -307,63 +361,13 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
         ];
     }
 
-    private void AttachmentOptionsMenu()
-    {
-        // To populate menu items for Attachment Menu options list...
-        AttachmentOptionsMenuList =
-        [
-            new MoreOptionMenu
-            {
-                Icon = (PathGeometry)dictionary["docs"],
-                MenuText = "Docs",
-                BorderStroke = "#3F3990",
-                Fill = "#CFCEEC"
-            },
-            new MoreOptionMenu
-            {
-                Icon = (PathGeometry)dictionary["camera"],
-                MenuText = "Camera",
-                BorderStroke = "#2C5A71",
-                Fill = "#C5E7F8"
-            },
-            new MoreOptionMenu
-            {
-                Icon = (PathGeometry)dictionary["gallery"],
-                MenuText = "Gallery",
-                BorderStroke = "#EA2140",
-                Fill = "#F7D5AC"
-            },
-            new MoreOptionMenu
-            {
-                Icon = (PathGeometry)dictionary["audio"],
-                MenuText = "Audio",
-                BorderStroke = "#E67E00",
-                Fill = "#F7D5AC"
-            },
-            new MoreOptionMenu
-            {
-                Icon = (PathGeometry)dictionary["location"],
-                MenuText = "Location",
-                BorderStroke = "#28C58F",
-                Fill = "#E3F5EF"
-            },
-            new MoreOptionMenu
-            {
-                Icon = (PathGeometry)dictionary["contact"],
-                MenuText = "Contact",
-                BorderStroke = "#0093E0",
-                Fill = "#DDF1FB"
-            },
-        ];
-    }
-
     #endregion Window: More options Popup
 
     public void CancelReply()
     {
         IsThisAReplyMessage = false;
 
-        // Reset Reply Message Text
+        // Reset Reply LastMessage Text
         MessageToReplyText = string.Empty;
     }
 
@@ -402,12 +406,34 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
             // Add message to conversation list.
             _eventAggregator.Publish(conversation);
 
+            UpdateChatAndMoveUp(ChatListVM.Chats, conversation);
+            UpdateChatAndMoveUp(ChatListVM.PinnedChats, conversation);
+            UpdateChatAndMoveUp(ChatListVM.FilteredChats, conversation);
+            UpdateChatAndMoveUp(ChatListVM.FilteredPinnedChats, conversation);
+            UpdateChatAndMoveUp(ChatListVM.ArchivedChats, conversation);
+
             // Clear Mesage properties and textbox when message is sent.
             MessageText = string.Empty;
             MessageToReplyText = string.Empty;
             IsThisAReplyMessage = false;
+        }
+    }
 
-            // TODO: Add Function to Move the chat contact on top when new message is sent or received.
+    // Move the chat contact on top when new message is sent or received.
+    protected void UpdateChatAndMoveUp(ObservableCollection<ChatListItem> chatList, ChatConversation conversation)
+    {
+        // Check if the message sent it to the selected contact or not...
+        var chat = chatList.FirstOrDefault(chat => chat.ContactName == ContactName);
+
+        // if found.. than..
+        if (chat != null)
+        {
+            // Update Contact Chat Last LastMessage and LastMessage Time...
+            chat.LastMessage = MessageText;
+            chat.LastMessageTime = conversation.MsgSentOn;
+
+            // Move Chat on top when new message is received/sent...
+            chatList.Move(chatList.IndexOf(chat), 0);
         }
     }
 
@@ -442,8 +468,8 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
         // If searchbox is empty or chats is null pr chat cound less than 0
         if (string.IsNullOrWhiteSpace(SearchText) || ChatListVM.Chats == null || ChatListVM.Chats.Count <= 0)
         {
-            ChatListVM.FilteredChats = new ObservableCollection<ChatListData>(ChatListVM.Chats ?? Enumerable.Empty<ChatListData>());
-            ChatListVM.FilteredPinnedChats = new ObservableCollection<ChatListData>(ChatListVM.PinnedChats ?? Enumerable.Empty<ChatListData>());
+            ChatListVM.FilteredChats = new ObservableCollection<ChatListItem>(ChatListVM.Chats ?? Enumerable.Empty<ChatListItem>());
+            ChatListVM.FilteredPinnedChats = new ObservableCollection<ChatListItem>(ChatListVM.PinnedChats ?? Enumerable.Empty<ChatListItem>());
 
             // Update Last serach Text
             _lastSearchText = SearchText;
@@ -452,14 +478,14 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
         // Now, to find the all chats that contain the text in our search box, if that chat is in Normal Unpinned Chat list find there...
 
-        Func<ChatListData, bool> searchPredicate = chat =>
+        Func<ChatListItem, bool> searchPredicate = chat =>
             chat.ContactName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)  // if ContactName Contains SearchText then add it in filtered chat list
-            || (chat.Message != null && chat.Message.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)); // if Message Contains SearchText then add it in filtered chat list
+            || (chat.LastMessage != null && chat.LastMessage.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)); // if LastMessage Contains SearchText then add it in filtered chat list
 
-        ChatListVM.FilteredChats = new ObservableCollection<ChatListData>(ChatListVM.Chats.Where(searchPredicate));
+        ChatListVM.FilteredChats = new ObservableCollection<ChatListItem>(ChatListVM.Chats.Where(searchPredicate));
 
         // else if not found in Normal Unpinned Chat list, find in pinned chats list
-        ChatListVM.FilteredPinnedChats = new ObservableCollection<ChatListData>(ChatListVM.PinnedChats.Where(searchPredicate));
+        ChatListVM.FilteredPinnedChats = new ObservableCollection<ChatListItem>(ChatListVM.PinnedChats.Where(searchPredicate));
 
         // Update Last serach Text
         _lastSearchText = SearchText;

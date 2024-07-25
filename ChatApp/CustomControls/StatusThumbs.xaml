@@ -4,8 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:ChatApp.Domain.Models;assembly=ChatApp.Domain"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
-    d:DataContext="{d:DesignInstance viewmodels:StatusThumbsViewModel}"
+    d:DataContext="{d:DesignInstance viewmodels:StatusThumbsViewModel,
+                                     IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -20,8 +22,10 @@
         -->
 
         <DataTemplate x:Key="ThumbsTemplate" DataType="{x:Type Button}">
+
             <!--  Ellipse  -->
-            <Grid Margin="4,0">
+            <Grid Margin="4,0" d:DataContext="{d:DesignInstance models:StatusDataModel}">
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80" />
                     <RowDefinition />
@@ -62,7 +66,7 @@
                                     <DataTrigger Binding="{Binding IsMeAddStatus}" Value="False">
                                         <Setter Property="Fill">
                                             <Setter.Value>
-                                                <ImageBrush ImageSource="{Binding StatusImage}" Stretch="UniformToFill" />
+                                                <ImageBrush ImageSource="{Binding StatusImageUri}" Stretch="UniformToFill" />
                                             </Setter.Value>
                                         </Setter>
                                     </DataTrigger>
@@ -103,7 +107,7 @@
                     StrokeThickness="2">
 
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding ContactPhoto}" Stretch="UniformToFill" />
+                        <ImageBrush ImageSource="{Binding ContactPhotoUri}" Stretch="UniformToFill" />
                     </Ellipse.Fill>
 
                     <!--  Also hide profile photo if the IsMeAddStatus = true  -->
