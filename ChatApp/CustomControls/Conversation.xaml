@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
-    x:Name="_conversations"
+    x:Name="ConversationListUserControl"
     Width="auto"
     Height="auto"
     d:DataContext="{d:DesignInstance viewmodels:ConversationViewModel}"
@@ -121,7 +121,7 @@
                                                 <Button
                                                     x:Name="ReplyButton"
                                                     Grid.Column="2"
-                                                    Command="{Binding ElementName=_conversations, Path=DataContext.RelayCommand}"
+                                                    Command="{Binding ElementName=ConversationListUserControl, Path=DataContext.RelayCommand}"
                                                     CommandParameter="{Binding}"
                                                     Content="{StaticResource reply}"
                                                     Style="{StaticResource IconButtonStyle}"

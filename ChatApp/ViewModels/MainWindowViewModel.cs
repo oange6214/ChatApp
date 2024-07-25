@@ -1,9 +1,11 @@
 ﻿using ChatApp.Domain.Models;
 using ChatApp.EventArgs;
+using ChatApp.Models;
 using ChatApp.ViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
+using System.Windows.Media;
 using Toolkit.Wpf.Mvvm.ComponentModel;
 using Toolkit.Wpf.Mvvm.Input;
 using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
@@ -12,6 +14,9 @@ namespace ChatApp.ViewModels;
 
 public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 {
+    // Initializing resource dictionary file
+    private readonly ResourceDictionary dictionary = Application.LoadComponent(new Uri("/ChatApp;component/Assets/Images/icons.xaml", UriKind.RelativeOrAbsolute)) as ResourceDictionary;
+
     #region Fields
 
     private string _contactName;
@@ -22,6 +27,8 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     private string _lastSeen;
     private string _messageText;
     private string _searchText;
+    private ObservableCollection<MoreOptionMenu> _windowMoreOptionsMenuList;
+    private ObservableCollection<MoreOptionMenu> _attachmentOptionsMenuList;
     private WindowState _windowState;
 
     #endregion Fields
@@ -73,6 +80,18 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
     public IStatusThumbsViewModel StatusThumbsVM { get; }
 
+    public ObservableCollection<MoreOptionMenu> WindowMoreOptionsMenuList
+    {
+        get => _windowMoreOptionsMenuList;
+        set => SetProperty(ref _windowMoreOptionsMenuList, value);
+    }
+
+    public ObservableCollection<MoreOptionMenu> AttachmentOptionsMenuList
+    {
+        get => _attachmentOptionsMenuList;
+        set => SetProperty(ref _attachmentOptionsMenuList, value);
+    }
+
     public WindowState WindowState
     {
         get => _windowState;
@@ -106,9 +125,7 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
 
     private bool _focusMessageBox;
     private bool _isContactInfoOpen;
-
     private bool _isThisAReplyMessage;
-
     private string _messageToReplyText;
 
     public bool FocusMessageBox
@@ -197,51 +214,150 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     private IRelayCommand _cancelReplyCommand;
     private IRelayCommand _clearSearchCommand;
     private IRelayCommand _closeCommand;
+    private IRelayCommand _conversationScreenMoreOptionsMenuCommand;
     private IRelayCommand _maximizeCommand;
     private IRelayCommand _minimizeCommand;
     private IRelayCommand _openConversationSearchCommand;
     private IRelayCommand _openSearchCommand;
     private IRelayCommand _searchCommand;
     private IRelayCommand _sendMessageCommand;
+    private IRelayCommand _windowsMoreOptionsCommand;
+    private IRelayCommand _attachmentOptionsCommand;
     public IRelayCommand CancelReplyCommand => _cancelReplyCommand ??= new RelayCommand(CancelReply);
     public IRelayCommand ClearSearchCommand => _clearSearchCommand ??= new RelayCommand(ClearSearchBox);
     public IRelayCommand CloseCommand => _closeCommand ??= new RelayCommand(Close);
+    public IRelayCommand ConversationScreenMoreOptionsMenuCommand => _conversationScreenMoreOptionsMenuCommand ??= new RelayCommand(ConversationScreenMoreOptionsMenu);
     public IRelayCommand MaximizeCommand => _maximizeCommand ??= new RelayCommand(Maximize);
     public IRelayCommand MinimizeCommand => _minimizeCommand ??= new RelayCommand(Minimize);
     public IRelayCommand OpenConversationSearchCommand => _openConversationSearchCommand ??= new RelayCommand(OpenConversationSearchBox);
     public IRelayCommand OpenSearchCommand => _openSearchCommand ??= new RelayCommand(OpenSearchBox);
     public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(Search);
     public IRelayCommand SendMessageCommand => _sendMessageCommand ??= new RelayCommand(SendMessage);
+    public IRelayCommand WindowsMoreOptionsCommand => _windowsMoreOptionsCommand ??= new RelayCommand(WindowMoreOptionsMenu);
+    public IRelayCommand AttachmentOptionsCommand => _attachmentOptionsCommand ??= new RelayCommand(AttachmentOptionsMenu);
 
     #endregion Commands
 
     #region Logics
 
-    public void SendMessage()
+    #region Window: More options Popup
+
+    private void ConversationScreenMoreOptionsMenu()
     {
-        // Send message only when the textbox is not empty..
-
-        if (!string.IsNullOrEmpty(MessageText))
-        {
-            var conversation = new ChatConversation
+        // To populate items for conversation screen options list...
+        WindowMoreOptionsMenuList =
+        [
+            new MoreOptionMenu
             {
-                ReceivedMessage = MessageToReplyText,
-                SentMessage = MessageText,
-                MsgSentOn = DateTime.Now.ToString("MMM dd, hh:mm tt"),
-                MessageContainsReply = IsThisAReplyMessage
-            };
-
-            // Add message to conversation list.
-            _eventAggregator.Publish(conversation);
-
-            // Clear Mesage properties and textbox when message is sent.
-            MessageText = string.Empty;
-            MessageToReplyText = string.Empty;
-            IsThisAReplyMessage = false;
-
-            // TODO: Add Function to Move the chat contact on top when new message is sent or received.
-        }
+                Icon = (PathGeometry)dictionary["allmedia"],
+                MenuText = "All Media"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["wallpaper"],
+                MenuText = "Change Wallpaper"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["report"],
+                MenuText = "Report"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["block"],
+                MenuText = "Block"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["clearchat"],
+                MenuText = "Clear Chat"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["exportchat"],
+                MenuText = "Export Chat"
+            },
+        ];
     }
+
+    private void WindowMoreOptionsMenu()
+    {
+        WindowMoreOptionsMenuList =
+        [
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["newgroup"],
+                MenuText = "New Group"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["newbroadcast"],
+                MenuText = "New Broadcast"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["starredmessages"],
+                MenuText = "Starred Messages"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["settings"],
+                MenuText = "Settings"
+            },
+        ];
+    }
+
+    private void AttachmentOptionsMenu()
+    {
+        // To populate menu items for Attachment Menu options list...
+        AttachmentOptionsMenuList =
+        [
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["docs"],
+                MenuText = "Docs",
+                BorderStroke = "#3F3990",
+                Fill = "#CFCEEC"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["camera"],
+                MenuText = "Camera",
+                BorderStroke = "#2C5A71",
+                Fill = "#C5E7F8"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["gallery"],
+                MenuText = "Gallery",
+                BorderStroke = "#EA2140",
+                Fill = "#F7D5AC"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["audio"],
+                MenuText = "Audio",
+                BorderStroke = "#E67E00",
+                Fill = "#F7D5AC"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["location"],
+                MenuText = "Location",
+                BorderStroke = "#28C58F",
+                Fill = "#E3F5EF"
+            },
+            new MoreOptionMenu
+            {
+                Icon = (PathGeometry)dictionary["contact"],
+                MenuText = "Contact",
+                BorderStroke = "#0093E0",
+                Fill = "#DDF1FB"
+            },
+        ];
+    }
+
+    #endregion Window: More options Popup
 
     public void CancelReply()
     {
@@ -268,6 +384,32 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     public void OpenConversationSearchBox() => ConversationVM.IsSearchConversationBoxOpen = true;
 
     public void OpenSearchBox() => IsSearchBoxOpen = true;
+
+    public void SendMessage()
+    {
+        // Send message only when the textbox is not empty..
+
+        if (!string.IsNullOrEmpty(MessageText))
+        {
+            var conversation = new ChatConversation
+            {
+                ReceivedMessage = MessageToReplyText,
+                SentMessage = MessageText,
+                MsgSentOn = DateTime.Now.ToString("MMM dd, hh:mm tt"),
+                MessageContainsReply = IsThisAReplyMessage
+            };
+
+            // Add message to conversation list.
+            _eventAggregator.Publish(conversation);
+
+            // Clear Mesage properties and textbox when message is sent.
+            MessageText = string.Empty;
+            MessageToReplyText = string.Empty;
+            IsThisAReplyMessage = false;
+
+            // TODO: Add Function to Move the chat contact on top when new message is sent or received.
+        }
+    }
 
     private void Close()
     {

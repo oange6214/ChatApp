@@ -1,0 +1,74 @@
+﻿<UserControl
+    x:Class="ChatApp.CustomControls.MoreOptionsPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ChatApp.CustomControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
+    x:Name="moreOptionsPopupUserControl"
+    Padding="20"
+    d:DataContext="{d:DesignInstance viewmodels:MainWindowViewModel}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Command" Value="{Binding ElementName=moreOptionsPopupUserControl, Path=DataContext.PopupOptionsCommand}" />
+            <Setter Property="CommandParameter" Value="{Binding}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <Path Data="{TemplateBinding Tag}" Style="{StaticResource {x:Type Path}}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Margin="0,0,10,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding Content}" />
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#DCE1DE" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#DCE1DE" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <!--  This is our options popup in which Settings, new message etc. Buttons will be placed.  -->
+    <Border Background="White" CornerRadius="5">
+        <!--  Border Shadow Effect  -->
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="25"
+                Direction="270"
+                ShadowDepth="5"
+                Color="#DCE1DE" />
+        </Border.Effect>
+
+        <ItemsControl Margin="10" ItemsSource="{Binding WindowMoreOptionsMenuList}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding MenuText}" Tag="{Binding Icon}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Border>
+</UserControl>

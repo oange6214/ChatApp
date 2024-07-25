@@ -83,8 +83,6 @@
 
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Margin="20">
-
-                <!--  Animation on chat item add  -->
                 <b:Interaction.Behaviors>
                     <b:FluidMoveBehavior AppliesTo="Children" Duration="0:0:0.25" />
                 </b:Interaction.Behaviors>

@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
-    x:Name="_Chats"
+    x:Name="ChatListUserControl"
     MinWidth="406"
     d:DataContext="{d:DesignInstance viewmodels:ChatListViewModel}"
     mc:Ignorable="d">
@@ -23,7 +23,7 @@
                         <Setter Property="VerticalAlignment" Value="Center" />
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="BorderThickness" Value="0" />
-                        <Setter Property="Command" Value="{Binding DataContext.GetSelectedChatCommand, ElementName=_Chats, UpdateSourceTrigger=PropertyChanged}" />
+                        <Setter Property="Command" Value="{Binding DataContext.GetSelectedChatCommand, ElementName=ChatListUserControl, UpdateSourceTrigger=PropertyChanged}" />
                         <Setter Property="CommandParameter" Value="{Binding}" />
                         <Setter Property="Content" Value="{Binding ContactName}" />
 
@@ -147,13 +147,13 @@
                                                                 <Style BasedOn="{StaticResource IconButtonStyle}" TargetType="{x:Type Button}">
                                                                     <!--  Normal Unpinned Chat Style  -->
                                                                     <Setter Property="Content" Value="{StaticResource pinned}" />
-                                                                    <Setter Property="Command" Value="{Binding DataContext.PinChatCommand, ElementName=_Chats}" />
+                                                                    <Setter Property="Command" Value="{Binding DataContext.PinChatCommand, ElementName=ChatListUserControl}" />
 
                                                                     <!--  Style when Chat is pinned  -->
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding ChatIsPinned}" Value="True">
                                                                             <Setter Property="Content" Value="{StaticResource unpin}" />
-                                                                            <Setter Property="Command" Value="{Binding DataContext.UnPinChatCommand, ElementName=_Chats}" />
+                                                                            <Setter Property="Command" Value="{Binding DataContext.UnPinChatCommand, ElementName=ChatListUserControl}" />
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
@@ -168,13 +168,13 @@
                                                                 <Style BasedOn="{StaticResource IconButtonStyle}" TargetType="{x:Type Button}">
                                                                     <!--  Normal Chat Style  -->
                                                                     <Setter Property="Content" Value="{StaticResource archive}" />
-                                                                    <Setter Property="Command" Value="{Binding DataContext.ArchiveChatCommand, ElementName=_Chats}" />
+                                                                    <Setter Property="Command" Value="{Binding DataContext.ArchiveChatCommand, ElementName=ChatListUserControl}" />
 
                                                                     <!--  Style when Chat is pinned  -->
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding ChatIsArchived}" Value="True">
                                                                             <Setter Property="Content" Value="{StaticResource unarchive}" />
-                                                                            <Setter Property="Command" Value="{Binding DataContext.UnArchiveChatCommand, ElementName=_Chats}" />
+                                                                            <Setter Property="Command" Value="{Binding DataContext.UnArchiveChatCommand, ElementName=ChatListUserControl}" />
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
@@ -293,7 +293,7 @@
                                     VerticalAlignment="Center"
                                     FontWeight="SemiBold">
                                     <Run Text="Archive (" />
-                                    <Run Text="{Binding DataContext.ArchivedChats.Count, Mode=OneWay, ElementName=_Chats}" />
+                                    <Run Text="{Binding DataContext.ArchivedChats.Count, Mode=OneWay, ElementName=ChatListUserControl}" />
                                     <Run Text=")" />
                                 </TextBlock>
                             </Grid>
@@ -302,7 +302,7 @@
                         <ControlTemplate.Triggers>
 
                             <!--  If there is no chats archived than hide button.  -->
-                            <DataTrigger Binding="{Binding DataContext.ArchivedChats.Count, Mode=OneWay, ElementName=_Chats}" Value="0">
+                            <DataTrigger Binding="{Binding DataContext.ArchivedChats.Count, Mode=OneWay, ElementName=ChatListUserControl}" Value="0">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
 
@@ -329,7 +329,6 @@
         </ItemsPanelTemplate>
     </UserControl.Resources>
 
-    <!--  TODO: Scroll Bar style  -->
     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
         <Grid Margin="25,15">
             <Grid.RowDefinitions>

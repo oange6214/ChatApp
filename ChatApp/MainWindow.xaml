@@ -108,17 +108,17 @@
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">
                         <Button
-                            x:Name="btnMinimize"
+                            x:Name="minimizeButton"
                             Command="{Binding MinimizeCommand}"
                             Content="{StaticResource minimize}"
                             Style="{StaticResource IconButtonStyle}" />
                         <Button
-                            x:Name="btnMaximize"
+                            x:Name="maximizeButton"
                             Command="{Binding MaximizeCommand}"
                             Content="{StaticResource maximize}"
                             Style="{StaticResource IconButtonStyle}" />
                         <Button
-                            x:Name="btnClose"
+                            x:Name="closeButton"
                             Command="{Binding CloseCommand}"
                             Content="{StaticResource close}"
                             Foreground="DarkRed"
@@ -171,7 +171,7 @@
 
                     <!--  Search Button  -->
                     <Button
-                        x:Name="ChatSearchButton"
+                        x:Name="chatSearchButton"
                         Grid.Column="2"
                         Command="{Binding OpenSearchCommand}"
                         Content="{StaticResource search}"
@@ -179,14 +179,14 @@
 
                     <!--  More options Popup Menu  -->
                     <ToggleButton
-                        x:Name="btnMoreOptions"
+                        x:Name="moreOptionsButton"
                         Grid.Column="3"
+                        Command="{Binding WindowsMoreOptionsCommand}"
                         Content="{StaticResource more}"
                         Style="{StaticResource ToggleIconButtonStyle}" />
                 </Grid>
 
                 <!--#region SearchBox-->
-                <!--  TODO: Add Search Box open/close and Hide/Unhide triggers  -->
                 <Border
                     x:Name="searchBoxBorder"
                     Grid.Row="1"
@@ -194,7 +194,7 @@
                     Margin="20"
                     Background="#DCE1DE"
                     CornerRadius="15"
-                    FocusManager.FocusedElement="{Binding ElementName=searchQuery}">
+                    FocusManager.FocusedElement="{Binding ElementName=searchQueryTextBox}">
 
                     <Border.Style>
                         <Style TargetType="{x:Type Border}">
@@ -208,7 +208,7 @@
                     </Border.Style>
 
                     <TextBox
-                        x:Name="searchQuery"
+                        x:Name="searchQueryTextBox"
                         Padding="12,0"
                         VerticalAlignment="Stretch"
                         VerticalContentAlignment="Center"
@@ -250,7 +250,7 @@
                 <StackPanel.Style>
                     <Style TargetType="{x:Type StackPanel}">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Visibility, ElementName=GridConv}" Value="Visible">
+                            <DataTrigger Binding="{Binding Visibility, ElementName=convGrid}" Value="Visible">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -272,7 +272,7 @@
             <!--#region Conversation Screen-->
 
             <Grid
-                x:Name="GridConv"
+                x:Name="convGrid"
                 Grid.Row="1"
                 Grid.Column="1">
                 <Grid.Style>
@@ -347,9 +347,11 @@
                         Content="{StaticResource search}"
                         Style="{StaticResource IconButtonStyle}" />
 
-                    <!--  More Options Button  -->
+                    <!--  Conversation More Options Button  -->
                     <ToggleButton
+                        x:Name="conversationMoreOptionListButton"
                         Grid.Column="4"
+                        Command="{Binding ConversationScreenMoreOptionsMenuCommand}"
                         Content="{StaticResource more}"
                         Style="{StaticResource ToggleIconButtonStyle}" />
                 </Grid>
@@ -427,7 +429,7 @@
 
                             <!--  Textbox Button  -->
                             <TextBox
-                                x:Name="MessageBox"
+                                x:Name="messageBoxTextBox"
                                 Padding="12,0"
                                 VerticalAlignment="Stretch"
                                 VerticalContentAlignment="Center"
@@ -435,12 +437,12 @@
                                 BorderThickness="0"
                                 Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}">
 
-                                <!--  Set Focus on MessageBox when FocusMessageBox = true  -->
+                                <!--  Set Focus on messageBoxTextBox when FocusMessageBox = true  -->
                                 <TextBox.Style>
                                     <Style TargetType="{x:Type TextBox}">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding FocusMessageBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="true">
-                                                <Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=MessageBox}" />
+                                                <Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=messageBoxTextBox}" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -457,14 +459,13 @@
                                 Grid.Row="1"
                                 HorizontalAlignment="Right"
                                 Orientation="Horizontal">
-                                <!--  TODO: Commands  -->
-
-                                <Button
-                                    x:Name="AttachButton"
+                                <ToggleButton
+                                    x:Name="attachButton"
+                                    Command="{Binding AttachmentOptionsCommand}"
                                     Content="{StaticResource attach}"
-                                    Style="{StaticResource IconButtonStyle}" />
+                                    Style="{StaticResource ToggleIconButtonStyle}" />
                                 <Button
-                                    x:Name="SendMsgButton"
+                                    x:Name="sendMsgButton"
                                     Command="{Binding SendMessageCommand}"
                                     Content="{StaticResource send}"
                                     Style="{StaticResource IconButtonStyle}" />
@@ -480,9 +481,87 @@
 
             <!--  Contact Info  -->
             <customcontrols:ContactInfo
-                x:Name="ContactInfoScreen"
+                x:Name="screenContactInfo"
                 Grid.Row="1"
                 Grid.Column="2" />
+
+            <!--#region More Options-->
+
+            <Popup
+                AllowsTransparency="True"
+                PopupAnimation="Fade"
+                StaysOpen="False">
+                <Popup.Style>
+                    <Style TargetType="{x:Type Popup}">
+                        <Style.Triggers>
+                            <!--  Open when More Options Button is selected  -->
+                            <DataTrigger Binding="{Binding IsChecked, Mode=TwoWay, ElementName=moreOptionsButton}" Value="true">
+                                <Setter Property="PlacementTarget" Value="{Binding ElementName=moreOptionsButton}" />
+                                <Setter Property="IsOpen" Value="{Binding IsChecked, Mode=TwoWay, ElementName=moreOptionsButton}" />
+                                <Setter Property="HorizontalOffset" Value="-170" />
+                                <Setter Property="VerticalOffset" Value="-10" />
+                                <Setter Property="Placement" Value="Bottom" />
+                            </DataTrigger>
+
+                            <!--  Open when More Options Button In Conversation Screen is selected  -->
+                            <DataTrigger Binding="{Binding IsChecked, Mode=TwoWay, ElementName=conversationMoreOptionListButton}" Value="true">
+                                <Setter Property="PlacementTarget" Value="{Binding ElementName=conversationMoreOptionListButton}" />
+                                <Setter Property="IsOpen" Value="{Binding IsChecked, Mode=TwoWay, ElementName=conversationMoreOptionListButton}" />
+                                <Setter Property="HorizontalOffset" Value="-170" />
+                                <Setter Property="VerticalOffset" Value="-10" />
+                                <Setter Property="Placement" Value="Bottom" />
+                            </DataTrigger>
+
+                            <!--  Open when Attach Button is selected  -->
+                            <DataTrigger Binding="{Binding IsChecked, Mode=TwoWay, ElementName=attachButton}" Value="true">
+                                <Setter Property="PlacementTarget" Value="{Binding ElementName=attachButton}" />
+                                <Setter Property="IsOpen" Value="{Binding IsChecked, Mode=TwoWay, ElementName=attachButton}" />
+                                <Setter Property="HorizontalOffset" Value="-360" />
+                                <Setter Property="VerticalOffset" Value="-10" />
+                                <Setter Property="Placement" Value="Top" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Popup.Style>
+
+                <Grid>
+                    <customcontrols:MoreOptionsPopup>
+                        <customcontrols:MoreOptionsPopup.Style>
+                            <Style TargetType="{x:Type customcontrols:MoreOptionsPopup}">
+
+                                <!--  Hidden by default  -->
+                                <Setter Property="Visibility" Value="Collapsed" />
+
+                                <!--  Show only when more options but is checked  -->
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, Mode=TwoWay, ElementName=moreOptionsButton}" Value="true">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsChecked, Mode=TwoWay, ElementName=conversationMoreOptionListButton}" Value="true">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </customcontrols:MoreOptionsPopup.Style>
+                    </customcontrols:MoreOptionsPopup>
+
+                    <customcontrols:AttachFilePopupMenu>
+                        <customcontrols:AttachFilePopupMenu.Style>
+                            <Style TargetType="{x:Type customcontrols:AttachFilePopupMenu}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, Mode=TwoWay, ElementName=attachButton}" Value="true">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </customcontrols:AttachFilePopupMenu.Style>
+                    </customcontrols:AttachFilePopupMenu>
+                </Grid>
+            </Popup>
+
+            <!--#endregion-->
         </Grid>
     </Border>
 </Window>
