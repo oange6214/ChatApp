@@ -1,16 +1,13 @@
-﻿using ChatApp.Data;
-using ChatApp.Data.Interfaces;
-using ChatApp.Data.Repositories;
-using ChatApp.Services.Implementation;
-using ChatApp.Services.Interfaces;
+﻿using ChatApp.Core.Interfaces;
+using ChatApp.Core.Services;
+using ChatApp.Infrastructure.Data;
+using ChatApp.Infrastructure.Data.Repositories;
+using ChatApp.Infrastructure.Mapping;
 using ChatApp.ViewModels;
 using ChatApp.ViewModels.Interfaces;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Windows;
-using Toolkit.Mvvm.Messaging;
-using Toolkit.Mvvm.Messaging.Interfaces;
 
 namespace ChatApp;
 
@@ -52,7 +49,7 @@ public partial class App : Application
     private void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<IDbConnectionFactory>(sp =>
-        new DbConnectionFactory(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\Workspaces\Devolops\WPFs\ChatApp\ChatApp\Database\Database1.mdf;Integrated Security=True"));
+            new DbConnectionFactory(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\Workspaces\Devolops\WPFs\ChatApp\ChatApp.Infrastructure\Database\Database1.mdf;Integrated Security=True"));
         services.AddScoped<IChatRepository, ChatRepository>();
         services.AddScoped<IChatService, ChatService>();
 
