@@ -228,16 +228,13 @@
 
                 <!--#region  Status Thumbnails-->
 
-                <customcontrols:StatusThumbs Grid.Row="2" DataContext="{Binding StatusThumbsVM}" />
+                <customcontrols:StatusThumbs Grid.Row="2" />
 
                 <!--#endregion-->
 
                 <!--#region ChatList-->
 
-                <customcontrols:ChatList
-                    Grid.Row="3"
-                    VerticalAlignment="Top"
-                    DataContext="{Binding ChatListVM}" />
+                <customcontrols:ChatList Grid.Row="3" VerticalAlignment="Top" />
 
                 <!--#endregion-->
             </Grid>
@@ -365,7 +362,7 @@
                 </Grid>
 
                 <!--  Conversation Body  -->
-                <customcontrols:Conversation Grid.Row="1" DataContext="{Binding ConversationVM}" />
+                <customcontrols:Conversation Grid.Row="1" />
 
                 <!--  Replay a specific message  -->
                 <Border

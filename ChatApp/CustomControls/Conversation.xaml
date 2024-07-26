@@ -10,7 +10,7 @@
     x:Name="ConversationListUserControl"
     Width="auto"
     Height="auto"
-    d:DataContext="{d:DesignInstance viewmodels:ConversationViewModel,
+    d:DataContext="{d:DesignInstance viewmodels:MainWindowViewModel,
                                      IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 

@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:ChatApp.Domain.Models;assembly=ChatApp.Domain"
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
-    d:DataContext="{d:DesignInstance viewmodels:StatusThumbsViewModel,
+    d:DataContext="{d:DesignInstance viewmodels:MainWindowViewModel,
                                      IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 

@@ -58,9 +58,6 @@ public partial class App : Application
         services.AddScoped<IChatRepository, ChatRepository>();
         services.AddScoped<IChatService, ChatService>();
 
-        services.AddSingleton<IStatusThumbsViewModel, StatusThumbsViewModel>();
-        services.AddSingleton<IChatListViewModel, ChatListViewModel>();
-        services.AddSingleton<IConversationViewModel, ConversationViewModel>();
         services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
         services.AddSingleton(AutoMapperConfig.Initialize());
 

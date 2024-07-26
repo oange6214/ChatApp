@@ -9,7 +9,7 @@
     xmlns:viewmodels="clr-namespace:ChatApp.ViewModels"
     x:Name="ChatListUserControl"
     MinWidth="406"
-    d:DataContext="{d:DesignInstance viewmodels:ChatListViewModel,
+    d:DataContext="{d:DesignInstance viewmodels:MainWindowViewModel,
                                      IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 
