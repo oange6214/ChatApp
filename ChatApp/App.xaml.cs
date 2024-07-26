@@ -9,8 +9,8 @@ using ChatApp.ViewModels.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Windows;
-using Toolkit.Wpf.Mvvm.Messaging;
-using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
+using Toolkit.Mvvm.Messaging;
+using Toolkit.Mvvm.Messaging.Interfaces;
 
 namespace ChatApp;
 

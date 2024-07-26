@@ -9,9 +9,9 @@ using System.Data;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
-using Toolkit.Wpf.Mvvm.ComponentModel;
-using Toolkit.Wpf.Mvvm.Input;
-using Toolkit.Wpf.Mvvm.Messaging.Interfaces;
+using Toolkit.Mvvm.ComponentModel;
+using Toolkit.Mvvm.Input;
+using Toolkit.Mvvm.Messaging.Interfaces;
 
 namespace ChatApp.ViewModels;
 

@@ -39,7 +39,7 @@
 		<ProjectReference Include="..\ChatApp.Data\ChatApp.Data.csproj" />
 		<ProjectReference Include="..\ChatApp.Domain\ChatApp.Domain.csproj" />
 		<ProjectReference Include="..\ChatApp.Services\ChatApp.Services.csproj" />
-		<ProjectReference Include="..\Toolkit.Wpf.Mvvm\Toolkit.Wpf.Mvvm.csproj" />
+		<ProjectReference Include="..\Toolkit.Mvvm\Toolkit.Mvvm.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
