@@ -51,8 +51,6 @@ public partial class App : Application
 
     private void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<IEventAggregator, EventAggregator>();
-
         services.AddSingleton<IDbConnectionFactory>(sp =>
         new DbConnectionFactory(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\Workspaces\Devolops\WPFs\ChatApp\ChatApp\Database\Database1.mdf;Integrated Security=True"));
         services.AddScoped<IChatRepository, ChatRepository>();

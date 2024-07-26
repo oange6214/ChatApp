@@ -23,11 +23,8 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     {
     }
 
-    public MainWindowViewModel(
-        IEventAggregator eventAggregator,
-        IChatService chatService)
+    public MainWindowViewModel(IChatService chatService)
     {
-        _eventAggregator = eventAggregator;
         _chatService = chatService;
 
         LoadChats();
@@ -46,7 +43,6 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     private ObservableCollection<MoreOptionMenu> _attachmentOptionsMenuList;
     private string _contactName;
     private byte[] _contactPhotoUri;
-    private IEventAggregator _eventAggregator;
     private bool _isSearchBoxOpen;
     private string _lastSearchText;
     private string _lastSeen;
@@ -190,23 +186,6 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     #endregion Commands
 
     #endregion ContactInfo
-
-    #region Event Aggregator Methods
-
-    private void OnChatSelectedEvent(ChatSelectedEventArgs evt)
-    {
-        ContactName = evt.ContactName;
-        ContactPhotoUri = evt.ContactPhotoUri;
-    }
-
-    private void OnReplyMessageEvent(ReplyMessageEventArgs args)
-    {
-        FocusMessageBox = args.FocusMessageBox;
-        MessageToReplyText = args.MessageToReplyText;
-        IsThisAReplyMessage = args.IsThisAReplyMessage;
-    }
-
-    #endregion Event Aggregator Methods
 
     #region Commands
 
@@ -952,10 +931,7 @@ public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
         }
 
         // Reset reply message text when the new chat is fetched.
-        _eventAggregator.Publish(new ReplyMessageEventArgs
-        {
-            MessageToReplyText = string.Empty
-        });
+        MessageToReplyText = string.Empty;
     }
 
     private bool MatchesSearch(ChatConversation chat, string searchText)
