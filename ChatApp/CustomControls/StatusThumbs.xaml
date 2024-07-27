@@ -12,7 +12,6 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <converters:NullImageConverter x:Key="NullImageConverter" />
 
         <!--
             Idea here is to have 2 Ellipse:
