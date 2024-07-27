@@ -11,8 +11,8 @@ public partial class MainWindowViewModel
 
     #region Fields
 
-    private ObservableCollection<ChatConversation> _conversations;
-    private ObservableCollection<ChatConversation> _filteredConversations;
+    private ObservableCollection<ChatConversationDto> _conversations;
+    private ObservableCollection<ChatConversationDto> _filteredConversations;
 
     #endregion Fields
 
@@ -24,7 +24,7 @@ public partial class MainWindowViewModel
 
     private string _searchConversationText;
 
-    public ObservableCollection<ChatConversation> Conversations
+    public ObservableCollection<ChatConversationDto> Conversations
     {
         get => _conversations;
         set
@@ -32,7 +32,7 @@ public partial class MainWindowViewModel
             if (SetProperty(ref _conversations, value))
             {
                 // Updating filtered chats to match
-                FilteredConversations = new ObservableCollection<ChatConversation>(_conversations);
+                FilteredConversations = new ObservableCollection<ChatConversationDto>(_conversations);
             }
         }
     }
@@ -40,7 +40,7 @@ public partial class MainWindowViewModel
     /// <summary>
     /// Filter Conversation
     /// </summary>
-    public ObservableCollection<ChatConversation> FilteredConversations
+    public ObservableCollection<ChatConversationDto> FilteredConversations
     {
         get => _filteredConversations;
         set => SetProperty(ref _filteredConversations, value);
@@ -85,7 +85,7 @@ public partial class MainWindowViewModel
     private IRelayCommand _searchConversationCommand;
     public IRelayCommand ClearConversationSearchCommand => _clearConversationSearchCommand ??= new RelayCommand(ClearConversationSearchBox);
 
-    public IRelayCommand RelayCommand => _relayCommand ??= new RelayCommand<ChatConversation>(data =>
+    public IRelayCommand RelayCommand => _relayCommand ??= new RelayCommand<ChatConversationDto>(data =>
     {
         if (data == null)
             return;
@@ -126,7 +126,7 @@ public partial class MainWindowViewModel
             && source.Contains(searchText, StringComparison.CurrentCultureIgnoreCase);
     }
 
-    private async Task LoadChatConversation(ChatListItem chat)
+    private async Task LoadChatConversation(ChatListItemDto chat)
     {
         Conversations ??= [];
 
@@ -143,7 +143,7 @@ public partial class MainWindowViewModel
                 chat.LastMessage = !string.IsNullOrEmpty(conversation.ReceivedMessage) ? conversation.ReceivedMessage : conversation.SentMessage;
             }
 
-            Conversations = new ObservableCollection<ChatConversation>(conversations);
+            Conversations = new ObservableCollection<ChatConversationDto>(conversations);
         }
         catch (Exception ex)
         {
@@ -154,7 +154,7 @@ public partial class MainWindowViewModel
         MessageToReplyText = string.Empty;
     }
 
-    private bool MatchesSearch(ChatConversation chat, string searchText)
+    private bool MatchesSearch(ChatConversationDto chat, string searchText)
     {
         if (string.IsNullOrEmpty(searchText))
             return true;
@@ -177,14 +177,14 @@ public partial class MainWindowViewModel
         // If searchbox is empty or chats is null pr chat cound less than 0
         if (string.IsNullOrWhiteSpace(SearchConversationText) || Conversations == null || Conversations.Count <= 0)
         {
-            FilteredConversations = new ObservableCollection<ChatConversation>(Conversations ?? Enumerable.Empty<ChatConversation>());
+            FilteredConversations = new ObservableCollection<ChatConversationDto>(Conversations ?? Enumerable.Empty<ChatConversationDto>());
 
             // Update Last serach Text
             _lastSearchConversationText = SearchConversationText;
             return;
         }
 
-        FilteredConversations = new ObservableCollection<ChatConversation>(
+        FilteredConversations = new ObservableCollection<ChatConversationDto>(
             Conversations.Where(chat => MatchesSearch(chat, SearchConversationText))
         );
 

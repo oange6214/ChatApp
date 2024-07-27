@@ -1,16 +1,11 @@
 ﻿using ChatApp.Core.Models;
+using System.Collections.ObjectModel;
 
 namespace ChatApp.Core.Interfaces;
 
 public interface IChatService
 {
-    //Task<bool> AddConversationAsync(ChatConversation conversation);
+    Task<IEnumerable<ChatConversationDto>> GetConversationsByContactNameAsync(string contactName);
 
-    //Task<IEnumerable<ChatConversation>> GetAllConversationsAsync();
-
-    //Task<ChatConversation> GetConversationByIdAsync(int id);
-
-    Task<IEnumerable<ChatConversation>> GetConversationsByContactNameAsync(string contactName);
-
-    Task<IEnumerable<ChatConversation>> GetContact();
+    Task<ObservableCollection<ChatListItemDto>> GetChatListAsync();
 }

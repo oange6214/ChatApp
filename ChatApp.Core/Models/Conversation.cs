@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.Core.Entities;
 
-public class ChatConversationEntity
+public class Conversation
 {
     public string ContactName { get; set; }
     public string LastOnline { get; set; }

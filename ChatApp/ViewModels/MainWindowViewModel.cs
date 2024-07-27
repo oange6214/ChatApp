@@ -1,8 +1,5 @@
 ﻿using ChatApp.Core.Interfaces;
 using ChatApp.Core.Models;
-
-using ChatApp.Core.Models;
-
 using ChatApp.ViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -36,7 +33,7 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
     // Initializing resource dictionary file
     private readonly ResourceDictionary dictionary = Application.LoadComponent(new Uri("/ChatApp;component/Assets/Images/icons.xaml", UriKind.RelativeOrAbsolute)) as ResourceDictionary;
 
-    private ObservableCollection<MoreOptionMenu> _attachmentOptionsMenuList;
+    private ObservableCollection<MoreOptionMenuDto> _attachmentOptionsMenuList;
     private string _contactName;
     private byte[] _contactPhotoUri;
     private bool _isSearchBoxOpen;
@@ -44,14 +41,14 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
     private string _lastSeen;
     private string _messageText;
     private string _searchText;
-    private ObservableCollection<MoreOptionMenu> _windowMoreOptionsMenuList;
+    private ObservableCollection<MoreOptionMenuDto> _windowMoreOptionsMenuList;
     private WindowState _windowState;
 
     #endregion Fields
 
     #region Properties
 
-    public ObservableCollection<MoreOptionMenu> AttachmentOptionsMenuList
+    public ObservableCollection<MoreOptionMenuDto> AttachmentOptionsMenuList
     {
         get => _attachmentOptionsMenuList;
         set => SetProperty(ref _attachmentOptionsMenuList, value);
@@ -96,7 +93,7 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
         set => SetProperty(ref _messageText, value);
     }
 
-    public ObservableCollection<MoreOptionMenu> WindowMoreOptionsMenuList
+    public ObservableCollection<MoreOptionMenuDto> WindowMoreOptionsMenuList
     {
         get => _windowMoreOptionsMenuList;
         set => SetProperty(ref _windowMoreOptionsMenuList, value);
@@ -221,42 +218,42 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
         // To populate menu items for Attachment Menu options list...
         AttachmentOptionsMenuList =
         [
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "docs",
                 MenuText = "Docs",
                 BorderStroke = "#3F3990",
                 Fill = "#CFCEEC"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "camera",
                 MenuText = "Camera",
                 BorderStroke = "#2C5A71",
                 Fill = "#C5E7F8"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "gallery",
                 MenuText = "Gallery",
                 BorderStroke = "#EA2140",
                 Fill = "#F7D5AC"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "audio",
                 MenuText = "Audio",
                 BorderStroke = "#E67E00",
                 Fill = "#F7D5AC"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "location",
                 MenuText = "Location",
                 BorderStroke = "#28C58F",
                 Fill = "#E3F5EF"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "contact",
                 MenuText = "Contact",
@@ -271,32 +268,32 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
         // To populate items for conversation screen options list...
         WindowMoreOptionsMenuList =
         [
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "allmedia",
                 MenuText = "All Media"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "wallpaper",
                 MenuText = "Change Wallpaper"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "report",
                 MenuText = "Report"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "block",
                 MenuText = "Block"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "clearchat",
                 MenuText = "Clear Chat"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "exportchat",
                 MenuText = "Export Chat"
@@ -308,22 +305,22 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
     {
         WindowMoreOptionsMenuList =
         [
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "newgroup",
                 MenuText = "New Group"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "newbroadcast",
                 MenuText = "New Broadcast"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "starredmessages",
                 MenuText = "Starred Messages"
             },
-            new MoreOptionMenu
+            new MoreOptionMenuDto
             {
                 Icon = "settings",
                 MenuText = "Settings"
@@ -365,7 +362,7 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
 
         if (!string.IsNullOrEmpty(MessageText))
         {
-            var conversation = new ChatConversation
+            var conversation = new ChatConversationDto
             {
                 ReceivedMessage = MessageToReplyText,
                 SentMessage = MessageText,
@@ -391,7 +388,7 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
     }
 
     // Move the chat contact on top when new message is sent or received.
-    protected void UpdateChatAndMoveUp(ObservableCollection<ChatListItem> chatList, ChatConversation conversation)
+    protected void UpdateChatAndMoveUp(ObservableCollection<ChatListItemDto> chatList, ChatConversationDto conversation)
     {
         // Check if the message sent it to the selected contact or not...
         var chat = chatList.FirstOrDefault(chat => chat.ContactName == ContactName);
@@ -439,8 +436,8 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
         // If searchbox is empty or chats is null pr chat cound less than 0
         if (string.IsNullOrWhiteSpace(SearchText) || Chats == null || Chats.Count <= 0)
         {
-            FilteredChats = new ObservableCollection<ChatListItem>(Chats ?? Enumerable.Empty<ChatListItem>());
-            FilteredPinnedChats = new ObservableCollection<ChatListItem>(PinnedChats ?? Enumerable.Empty<ChatListItem>());
+            FilteredChats = new ObservableCollection<ChatListItemDto>(Chats ?? Enumerable.Empty<ChatListItemDto>());
+            FilteredPinnedChats = new ObservableCollection<ChatListItemDto>(PinnedChats ?? Enumerable.Empty<ChatListItemDto>());
 
             // Update Last serach Text
             _lastSearchText = SearchText;
@@ -449,14 +446,14 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
 
         // Now, to find the all chats that contain the text in our search box, if that chat is in Normal Unpinned Chat list find there...
 
-        Func<ChatListItem, bool> searchPredicate = chat =>
+        Func<ChatListItemDto, bool> searchPredicate = chat =>
             chat.ContactName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)  // if ContactName Contains SearchText then add it in filtered chat list
             || (chat.LastMessage != null && chat.LastMessage.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)); // if LastMessage Contains SearchText then add it in filtered chat list
 
-        FilteredChats = new ObservableCollection<ChatListItem>(Chats.Where(searchPredicate));
+        FilteredChats = new ObservableCollection<ChatListItemDto>(Chats.Where(searchPredicate));
 
         // else if not found in Normal Unpinned Chat list, find in pinned chats list
-        FilteredPinnedChats = new ObservableCollection<ChatListItem>(PinnedChats.Where(searchPredicate));
+        FilteredPinnedChats = new ObservableCollection<ChatListItemDto>(PinnedChats.Where(searchPredicate));
 
         // Update Last serach Text
         _lastSearchText = SearchText;

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace ChatApp.Core.Models;
 
-public class ChatListItem : INotifyPropertyChanged
+public class ChatListItemDto : INotifyPropertyChanged
 {
     private string _lastMessage = string.Empty;
     private string _lastMessageTime = string.Empty;

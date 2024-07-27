@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ChatApp.Core.Interfaces;
 using ChatApp.Core.Models;
+using System.Collections.ObjectModel;
 
 namespace ChatApp.Core.Services;
 
@@ -15,30 +16,69 @@ public class ChatService : IChatService
         _chatRepository = chatRepository;
     }
 
-    public Task<IEnumerable<ChatConversation>> GetContact()
+    public async Task<ObservableCollection<ChatListItemDto>> GetChatListAsync()
     {
-        throw new NotImplementedException();
+        var contactsWithConversations = await _chatRepository.GetContactsWithLatestConversationsAsync();
+
+        // To avoid duplication
+        string lastItem = string.Empty;
+        string newItem = string.Empty;
+
+        ObservableCollection<ChatListItemDto> temp = [];
+
+        foreach (var tuple in contactsWithConversations)
+        {
+            string lastMessageTime = string.Empty;
+            string lastMessage = string.Empty;
+
+            // If the last message is received from sender than update time and lastMessge variables...
+            if (!string.IsNullOrEmpty(tuple.Item2.MsgReceivedOn))
+            {
+                lastMessageTime = Convert.ToDateTime(tuple.Item2.MsgReceivedOn).ToString("ddd hh:mm tt");
+                lastMessage = tuple.Item2.ReceivedMsgs;
+            }
+
+            // Else if we have sent last message then update accordingly...
+            if (!string.IsNullOrEmpty(tuple.Item2.MsgSentOn))
+            {
+                lastMessageTime = Convert.ToDateTime(tuple.Item2.MsgSentOn).ToString("ddd hh:mm tt");
+                lastMessage = tuple.Item2.MsgSentOn;
+            }
+
+            // If the chat is new or we are starting new conversation which means there will be no previous sent or recived msgs in that case...
+            // Show 'Start new conversation' message...
+            if (string.IsNullOrEmpty(lastMessage))
+            {
+                lastMessage = "Start new conversation";
+            }
+
+            // Update data in model...
+            ChatListItemDto chat = new()
+            {
+                ContactPhotoUri = tuple.Item1.Photo,
+                ContactName = tuple.Item1.ContactName,
+                LastMessage = lastMessage,
+                LastMessageTime = lastMessageTime
+            };
+
+            // Update
+            newItem = tuple.Item1.ContactName;
+
+            // If last added chat contact is not same as new one then only add...
+            if (lastItem != newItem)
+            {
+                temp.Add(chat);
+            }
+
+            lastItem = newItem;
+        }
+
+        return temp;
     }
 
-    //public async Task<bool> AddConversationAsync(ChatConversationDto conversation)
-    //{
-    //    int result = await _chatRepository.AddConversationAsync(conversation);
-    //    return result > 0;
-    //}
-
-    //public async Task<IEnumerable<ChatConversationDto>> GetAllConversationsAsync()
-    //{
-    //    return await _chatRepository.GetAllConversationsAsync();
-    //}
-
-    //public async Task<ChatConversationDto> GetConversationByIdAsync(int id)
-    //{
-    //    return await _chatRepository.GetConversationByIdAsync(id);
-    //}
-
-    public async Task<IEnumerable<ChatConversation>> GetConversationsByContactNameAsync(string contactName)
+    public async Task<IEnumerable<ChatConversationDto>> GetConversationsByContactNameAsync(string contactName)
     {
         var conversations = await _chatRepository.GetConversationsByContactNameAsync(contactName);
-        return _mapper.Map<IEnumerable<ChatConversation>>(conversations);
+        return _mapper.Map<IEnumerable<ChatConversationDto>>(conversations);
     }
 }

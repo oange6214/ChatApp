@@ -10,7 +10,7 @@ public static class AutoMapperConfig
     {
         var config = new MapperConfiguration(cfg =>
         {
-            cfg.CreateMap<ChatConversationEntity, ChatConversation>()
+            cfg.CreateMap<Conversation, ChatConversationDto>()
                 .ForMember(
                 dest => dest.ContactName,
                 opt => opt.MapFrom(src => src.ContactName))

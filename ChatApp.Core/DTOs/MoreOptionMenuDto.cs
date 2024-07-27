@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.Core.Models;
 
-public class MoreOptionMenu
+public class MoreOptionMenuDto
 {
     public string Icon { get; set; } = string.Empty;
     public string MenuText { get; set; } = string.Empty;

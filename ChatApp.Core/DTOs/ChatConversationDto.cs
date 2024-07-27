@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.Core.Models;
 
-public class ChatConversation
+public class ChatConversationDto
 {
     public string ContactName { get; set; } = string.Empty;
     public bool IsMessageReceived { get; set; }

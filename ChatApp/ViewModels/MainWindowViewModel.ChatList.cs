@@ -1,6 +1,5 @@
 ﻿using ChatApp.Core.Interfaces;
 using ChatApp.Core.Models;
-using Microsoft.Data.SqlClient;
 using System.Collections.ObjectModel;
 using Toolkit.Mvvm.Input;
 
@@ -12,12 +11,12 @@ public partial class MainWindowViewModel
 
     #region Fields
 
-    private ObservableCollection<ChatListItem> _archivedChats = [];
-    private ObservableCollection<ChatListItem> _chats = [];
+    private ObservableCollection<ChatListItemDto> _archivedChats = [];
+    private ObservableCollection<ChatListItemDto> _chats = [];
     private IChatService _chatService;
-    private ObservableCollection<ChatListItem> _filteredChats = [];
-    private ObservableCollection<ChatListItem> _filteredPinnedChats = [];
-    private ObservableCollection<ChatListItem> _pinnedChats = [];
+    private ObservableCollection<ChatListItemDto> _filteredChats = [];
+    private ObservableCollection<ChatListItemDto> _filteredPinnedChats = [];
+    private ObservableCollection<ChatListItemDto> _pinnedChats = [];
 
     #endregion Fields
 
@@ -25,13 +24,13 @@ public partial class MainWindowViewModel
 
     private int _chatPosition;
 
-    public ObservableCollection<ChatListItem> ArchivedChats
+    public ObservableCollection<ChatListItemDto> ArchivedChats
     {
         get => _archivedChats;
         set => SetProperty(ref _archivedChats, value);
     }
 
-    public ObservableCollection<ChatListItem> Chats
+    public ObservableCollection<ChatListItemDto> Chats
     {
         get => _chats;
         set
@@ -39,25 +38,25 @@ public partial class MainWindowViewModel
             if (SetProperty(ref _chats, value))
             {
                 // Updating filtered chats to match
-                FilteredChats = new ObservableCollection<ChatListItem>(_chats);
+                FilteredChats = new ObservableCollection<ChatListItemDto>(_chats);
             }
         }
     }
 
     // Filtering Chats & Pinned Chats
-    public ObservableCollection<ChatListItem> FilteredChats
+    public ObservableCollection<ChatListItemDto> FilteredChats
     {
         get => _filteredChats;
         set => SetProperty(ref _filteredChats, value);
     }
 
-    public ObservableCollection<ChatListItem> FilteredPinnedChats
+    public ObservableCollection<ChatListItemDto> FilteredPinnedChats
     {
         get => _filteredPinnedChats;
         set => SetProperty(ref _filteredPinnedChats, value);
     }
 
-    public ObservableCollection<ChatListItem> PinnedChats
+    public ObservableCollection<ChatListItemDto> PinnedChats
     {
         get => _pinnedChats;
         set
@@ -65,7 +64,7 @@ public partial class MainWindowViewModel
             if (SetProperty(ref _pinnedChats, value))
             {
                 // Updating filtered chats to match
-                FilteredPinnedChats = new ObservableCollection<ChatListItem>(_pinnedChats);
+                FilteredPinnedChats = new ObservableCollection<ChatListItemDto>(_pinnedChats);
             }
         }
     }
@@ -74,122 +73,14 @@ public partial class MainWindowViewModel
 
     #region Logics
 
-    private void LoadChats()
+    private async void LoadChats()
     {
         // Loading data from Database
         Chats ??= [];
 
-        string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\Workspaces\Devolops\WPFs\ChatApp\ChatApp.Infrastructure\Database\Database1.mdf;Integrated Security=True";
-        string sql = @"
-                        SELECT *
-                        FROM contacts p
-                        LEFT JOIN
-	                        (
-		                        SELECT a.*, ROW_NUMBER()
-			                        OVER(PARTITION BY a.contactname ORDER BY a.id DESC) AS seqnum
-		                        FROM conversations a
-	                        ) a
-	                        ON a.ContactName = p.contactname AND a.seqnum = 1
-                        ORDER BY a.Id DESC
-                        ";
-
-        ObservableCollection<ChatListItem> temp = [];
-
-        using (SqlConnection connection = new(connectionString))
-        {
-            connection.Open();
-
-            using SqlCommand commad = new(sql, connection);
-            using SqlDataReader reader = commad.ExecuteReader();
-
-            // To avoid duplication
-            string lastItem = string.Empty;
-            string newItem = string.Empty;
-
-            while (reader.Read())
-            {
-                string lastMessageTime = string.Empty;
-                string lastMessage = string.Empty;
-
-                // If the last message is received from sender than update time and lastMessge variables...
-                if (!string.IsNullOrEmpty(reader["MsgReceivedOn"].ToString()))
-                {
-                    lastMessageTime = Convert.ToDateTime(reader["MsgReceivedOn"].ToString()).ToString("ddd hh:mm tt");
-                    lastMessage = reader["ReceivedMsgs"].ToString();
-                }
-
-                // Else if we have sent last message then update accordingly...
-                if (!string.IsNullOrEmpty(reader["MsgSentOn"].ToString()))
-                {
-                    lastMessageTime = Convert.ToDateTime(reader["MsgSentOn"].ToString()).ToString("ddd hh:mm tt");
-                    lastMessage = reader["SentMsgs"].ToString();
-                }
-
-                // If the chat is new or we are starting new conversation which means there will be no previous sent or recived msgs in that case...
-                // Show 'Start new conversation' message...
-                if (string.IsNullOrEmpty(lastMessage))
-                {
-                    lastMessage = "Start new conversation";
-                }
-
-                // Update data in model...
-                ChatListItem chat = new()
-                {
-                    ContactPhotoUri = (byte[])reader["photo"],
-                    ContactName = reader["contactname"].ToString(),
-                    LastMessage = lastMessage,
-                    LastMessageTime = lastMessageTime
-                };
-
-                // Update
-                newItem = reader["contactname"].ToString();
-
-                // If last added chat contact is not same as new one then only add...
-                if (lastItem != newItem)
-                {
-                    temp.Add(chat);
-                }
-
-                lastItem = newItem;
-            }
-        }
-
         // Transfer data
-        Chats = temp;
+        Chats = await _chatService.GetChatListAsync();
     }
-
-    //Chats =
-    //[
-    //    new ChatListItem()
-    //    {
-    //        ContactName = "Billy",
-    //        ContactPhotoUri = new Uri("/Assets/Images/6.jpg", UriKind.RelativeOrAbsolute),
-    //        LastMessage = "Hey, What's up?",
-    //        LastMessageTime = "Tue, 12:58 PM",
-    //        IsSelected = true
-    //    },
-    //    new ChatListItem()
-    //    {
-    //        ContactName = "Mike",
-    //        ContactPhotoUri = new Uri("/Assets/Images/1.png", UriKind.RelativeOrAbsolute),
-    //        LastMessage = "Check the mail.",
-    //        LastMessageTime = "Mon, 10:07 AM"
-    //    },
-    //    new ChatListItem()
-    //    {
-    //        ContactName = "Steve",
-    //        ContactPhotoUri = new Uri("/Assets/Images/7.png", UriKind.RelativeOrAbsolute),
-    //        LastMessage = "Yes, we had fun.",
-    //        LastMessageTime = "Tue, 08:10 AM"
-    //    },
-    //    new ChatListItem()
-    //    {
-    //        ContactName = "John",
-    //        ContactPhotoUri = new Uri("/Assets/Images/8.jpg", UriKind.RelativeOrAbsolute),
-    //        LastMessage = "What about you?",
-    //        LastMessageTime = "Tue, 01:00 PM"
-    //    },
-    //];
 
     #endregion Logics
 
@@ -207,7 +98,7 @@ public partial class MainWindowViewModel
     // To Pin Chat on Pin Button Click
     private IRelayCommand _unPinChatCommand;
 
-    public IRelayCommand ArchiveChatCommand => _archiveChatCommand ??= new RelayCommand<ChatListItem>(data =>
+    public IRelayCommand ArchiveChatCommand => _archiveChatCommand ??= new RelayCommand<ChatListItemDto>(data =>
     {
         if (!ArchivedChats.Contains(data))
         {
@@ -226,7 +117,7 @@ public partial class MainWindowViewModel
         }
     });
 
-    public IRelayCommand GetSelectedChatCommand => _getSelectedChatCommand ??= new RelayCommand<ChatListItem>(data =>
+    public IRelayCommand GetSelectedChatCommand => _getSelectedChatCommand ??= new RelayCommand<ChatListItemDto>(data =>
     {
         if (data == null)
             return;
@@ -240,7 +131,7 @@ public partial class MainWindowViewModel
         LoadChatConversation(data);
     });
 
-    public IRelayCommand PinChatCommand => _pinChatCommand ??= new RelayCommand<ChatListItem>(data =>
+    public IRelayCommand PinChatCommand => _pinChatCommand ??= new RelayCommand<ChatListItemDto>(data =>
     {
         if (data == null)
             return;
@@ -272,7 +163,7 @@ public partial class MainWindowViewModel
         }
     });
 
-    public IRelayCommand UnArchiveChatCommand => _unArchiveChatCommand ??= new RelayCommand<ChatListItem>(data =>
+    public IRelayCommand UnArchiveChatCommand => _unArchiveChatCommand ??= new RelayCommand<ChatListItemDto>(data =>
     {
         if (!FilteredChats.Contains(data) && !Chats.Contains(data))
         {
@@ -284,7 +175,7 @@ public partial class MainWindowViewModel
         data.IsPinned = false;
     });
 
-    public IRelayCommand UnPinChatCommand => _unPinChatCommand ??= new RelayCommand<ChatListItem>(data =>
+    public IRelayCommand UnPinChatCommand => _unPinChatCommand ??= new RelayCommand<ChatListItemDto>(data =>
     {
         if (data == null)
             return;

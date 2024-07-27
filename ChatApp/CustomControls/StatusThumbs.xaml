@@ -24,7 +24,7 @@
         <DataTemplate x:Key="ThumbsTemplate" DataType="{x:Type Button}">
 
             <!--  Ellipse  -->
-            <Grid Margin="4,0" d:DataContext="{d:DesignInstance models:StatusDataModel}">
+            <Grid Margin="4,0" d:DataContext="{d:DesignInstance models:StatusDataModelDto}">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80" />

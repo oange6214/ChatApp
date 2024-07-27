@@ -9,13 +9,13 @@ public partial class MainWindowViewModel
 
     #region Fields
 
-    private ObservableCollection<StatusDataModel> _statuses;
+    private ObservableCollection<StatusDataModelDto> _statuses;
 
     #endregion Fields
 
     #region Properties
 
-    public ObservableCollection<StatusDataModel> StatusThumbsCollection
+    public ObservableCollection<StatusDataModelDto> StatusThumbsCollection
     {
         get => _statuses;
         set => SetProperty(ref _statuses, value);
@@ -29,32 +29,32 @@ public partial class MainWindowViewModel
     {
         StatusThumbsCollection =
             [
-                new StatusDataModel
+                new StatusDataModelDto
                 {
                     IsMeAddStatus = true,
                 },
-                new StatusDataModel
+                new StatusDataModelDto
                 {
                     ContactName = "Mike",
                     ContactPhotoUri = new Uri("/Assets/Images/1.png", UriKind.RelativeOrAbsolute),
                     StatusImageUri = new Uri("/Assets/Images/8.jpg", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
-                new StatusDataModel
+                new StatusDataModelDto
                 {
                     ContactName = "Steve",
                     ContactPhotoUri = new Uri("/Assets/Images/2.jpg", UriKind.RelativeOrAbsolute),
                     StatusImageUri = new Uri("/Assets/Images/7.png", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
-                new StatusDataModel
+                new StatusDataModelDto
                 {
                     ContactName = "Will",
                     ContactPhotoUri = new Uri("/Assets/Images/3.jpg", UriKind.RelativeOrAbsolute),
                     StatusImageUri = new Uri("/Assets/Images/6.jpg", UriKind.RelativeOrAbsolute),
                     IsMeAddStatus = false
                 },
-                new StatusDataModel
+                new StatusDataModelDto
                 {
                     ContactName = "John",
                     ContactPhotoUri = new Uri("/Assets/Images/4.jpg", UriKind.RelativeOrAbsolute),

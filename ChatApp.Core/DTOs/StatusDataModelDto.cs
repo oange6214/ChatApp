@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.Core.Models;
 
-public class StatusDataModel
+public class StatusDataModelDto
 {
     public string ContactName { get; set; } = string.Empty;
 
