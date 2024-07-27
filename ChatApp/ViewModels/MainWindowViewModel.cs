@@ -3,6 +3,8 @@ using ChatApp.Core.Models;
 using ChatApp.ViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics;
+using System.Reflection.Metadata;
 using System.Windows;
 using Toolkit.Mvvm.ComponentModel;
 using Toolkit.Mvvm.Input;
@@ -26,12 +28,7 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
 
     #endregion Ctors
 
-    #region Main Window
-
     #region Fields
-
-    // Initializing resource dictionary file
-    private readonly ResourceDictionary dictionary = Application.LoadComponent(new Uri("/ChatApp;component/Assets/Images/icons.xaml", UriKind.RelativeOrAbsolute)) as ResourceDictionary;
 
     private ObservableCollection<MoreOptionMenuDto> _attachmentOptionsMenuList;
     private string _contactName;
@@ -194,6 +191,7 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
     private IRelayCommand _searchCommand;
     private IRelayCommand _sendMessageCommand;
     private IRelayCommand _windowsMoreOptionsCommand;
+    private IRelayCommand _popupOptionsCommand;
     public IRelayCommand AttachmentOptionsCommand => _attachmentOptionsCommand ??= new RelayCommand(AttachmentOptionsMenu);
     public IRelayCommand CancelReplyCommand => _cancelReplyCommand ??= new RelayCommand(CancelReply);
     public IRelayCommand ClearSearchCommand => _clearSearchCommand ??= new RelayCommand(ClearSearchBox);
@@ -206,6 +204,7 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
     public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(Search);
     public IRelayCommand SendMessageCommand => _sendMessageCommand ??= new RelayCommand(SendMessage);
     public IRelayCommand WindowsMoreOptionsCommand => _windowsMoreOptionsCommand ??= new RelayCommand(WindowMoreOptionsMenu);
+    public IRelayCommand PopupOptionsCommand => _popupOptionsCommand ??= new RelayCommand<object>(PopupOptions);
 
     #endregion Commands
 
@@ -459,7 +458,90 @@ public partial class MainWindowViewModel : ObservableObject, IMainWindowViewMode
         _lastSearchText = SearchText;
     }
 
-    #endregion Logics
+    private void PopupOptions(object parameter)
+    {
+        if (parameter is MoreOptionMenuDto menuItem)
+        {
+            switch (menuItem.MenuText)
+            {
+                case "Docs":
+                    HandleDocsOption(menuItem);
+                    break;
 
-    #endregion Main Window
+                case "Camera":
+                    HandleCameraOption(menuItem);
+                    break;
+
+                case "Gallery":
+                    HandleGalleryOption(menuItem);
+                    break;
+
+                case "Audio":
+                    HandleAudioOption(menuItem);
+                    break;
+
+                case "Location":
+                    HandleLocationOption(menuItem);
+                    break;
+
+                case "Contact":
+                    HandleContactOption(menuItem);
+                    break;
+
+                default:
+                    HandleUnknownOption(menuItem);
+                    break;
+            }
+        }
+    }
+
+    private void HandleDocsOption(MoreOptionMenuDto menuItem)
+    {
+        // 處理文檔選項
+        Debug.WriteLine($"處理文檔選項：{menuItem.MenuText}");
+        // 在這裡添加打開文檔選擇器的代碼
+    }
+
+    private void HandleCameraOption(MoreOptionMenuDto menuItem)
+    {
+        // 處理相機選項
+        Debug.WriteLine($"處理相機選項：{menuItem.MenuText}");
+        // 在這裡添加打開相機的代碼
+    }
+
+    private void HandleGalleryOption(MoreOptionMenuDto menuItem)
+    {
+        // 處理圖庫選項
+        Debug.WriteLine($"處理圖庫選項：{menuItem.MenuText}");
+        // 在這裡添加打開圖庫的代碼
+    }
+
+    private void HandleAudioOption(MoreOptionMenuDto menuItem)
+    {
+        // 處理音頻選項
+        Debug.WriteLine($"處理音頻選項：{menuItem.MenuText}");
+        // 在這裡添加處理音頻的代碼
+    }
+
+    private void HandleLocationOption(MoreOptionMenuDto menuItem)
+    {
+        // 處理位置選項
+        Debug.WriteLine($"處理位置選項：{menuItem.MenuText}");
+        // 在這裡添加處理位置的代碼
+    }
+
+    private void HandleContactOption(MoreOptionMenuDto menuItem)
+    {
+        // 處理聯繫人選項
+        Debug.WriteLine($"處理聯繫人選項：{menuItem.MenuText}");
+        // 在這裡添加處理聯繫人的代碼
+    }
+
+    private void HandleUnknownOption(MoreOptionMenuDto menuItem)
+    {
+        // 處理未知選項
+        Debug.WriteLine($"未知選項：{menuItem.MenuText}");
+    }
+
+    #endregion Logics
 }

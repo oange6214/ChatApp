@@ -7,8 +7,6 @@ namespace ChatApp.ViewModels;
 
 public partial class MainWindowViewModel
 {
-    #region Conversation
-
     #region Fields
 
     private ObservableCollection<ChatConversationDto> _conversations;
@@ -193,6 +191,4 @@ public partial class MainWindowViewModel
     }
 
     #endregion Logics
-
-    #endregion Conversation
 }

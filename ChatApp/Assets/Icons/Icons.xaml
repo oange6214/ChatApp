@@ -1,7 +1,6 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <BitmapImage x:Key="DefaultImage" UriSource="/Assets/Images/5.jpg" />
+    <BitmapImage x:Key="DefaultImage" UriSource="/Assets/Images/6.jpg" />
 
     <PathGeometry x:Key="path" Figures="M14.998047,1.9980469L8.9980469,2.0039062 7.1640625,4 4,4C2.9,4,2,4.9,2,6L2,18C2,19.1,2.9,20,4,20L20,20C21.1,20,22,19.1,22,18L22,6C22,4.9,21.1,4,20,4L16.84375,4 14.998047,1.9980469z M14.121094,3.9980469L15.966797,6 20,6 20,18 4,18 4,6 8.0429688,6 9.8789062,4.0019531 14.121094,3.9980469z M12,7C9.239,7 7,9.239 7,12 7,14.761 9.239,17 12,17 14.761,17 17,14.761 17,12 17,9.239 14.761,7 12,7z M12,9C13.657,9 15,10.343 15,12 15,13.657 13.657,15 12,15 10.343,15 9,13.657 9,12 9,10.343 10.343,9 12,9z" />
 

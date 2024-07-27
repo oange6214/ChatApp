@@ -19,7 +19,7 @@
             <Setter Property="Height" Value="auto" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Command" Value="{Binding ElementName=attachFilePopupMenuUserControl, Path=DataContext.PopupOptionsCommand}" />
+            <Setter Property="Command" Value="{Binding Path=PopupOptionsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
             <Setter Property="CommandParameter" Value="{Binding}" />
             <Setter Property="Template">
                 <Setter.Value>

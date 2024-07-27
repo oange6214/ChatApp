@@ -39,7 +39,6 @@
 		</None>
 	</ItemGroup>
 
-
 	<ItemGroup>
 		<None Remove="Assets\Images\1.png" />
 		<None Remove="Assets\Images\2.jpg" />
@@ -50,17 +49,8 @@
 		<None Remove="Assets\Images\7.png" />
 		<None Remove="Assets\Images\8.jpg" />
 		<None Remove="Assets\Images\connectedworld.png" />
-		<None Remove="Assets\Images\Media\1.png" />
-		<None Remove="Assets\Images\Media\2.jpg" />
-		<None Remove="Assets\Images\Media\3.jpg" />
-		<None Remove="Assets\Images\Media\4.jpg" />
-		<None Remove="Assets\Images\Media\5.jpg" />
-		<None Remove="Assets\Images\Media\6.jpg" />
-		<None Remove="Assets\Images\Media\7.png" />
-		<None Remove="Assets\Images\Media\8.jpg" />
 		<None Remove="Assets\Images\ok.png" />
 	</ItemGroup>
-
 
 	<ItemGroup>
 		<Resource Include="Assets\Images\1.png">
@@ -88,30 +78,6 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Assets\Images\connectedworld.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Assets\Images\Media\1.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Assets\Images\Media\2.jpg">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Assets\Images\Media\3.jpg">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Assets\Images\Media\4.jpg">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Assets\Images\Media\5.jpg">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Assets\Images\Media\6.jpg">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Assets\Images\Media\7.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Assets\Images\Media\8.jpg">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Assets\Images\ok.png">

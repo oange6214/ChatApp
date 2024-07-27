@@ -5,8 +5,6 @@ namespace ChatApp.ViewModels;
 
 public partial class MainWindowViewModel
 {
-    #region Status Thumbs
-
     #region Fields
 
     private ObservableCollection<StatusDataModelDto> _statuses;
@@ -65,6 +63,4 @@ public partial class MainWindowViewModel
     }
 
     #endregion Logics
-
-    #endregion Status Thumbs
 }

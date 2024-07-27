@@ -7,8 +7,6 @@ namespace ChatApp.ViewModels;
 
 public partial class MainWindowViewModel
 {
-    #region Chat List
-
     #region Fields
 
     private ObservableCollection<ChatListItemDto> _archivedChats = [];
@@ -198,6 +196,4 @@ public partial class MainWindowViewModel
     });
 
     #endregion Commands
-
-    #endregion Chat List
 }

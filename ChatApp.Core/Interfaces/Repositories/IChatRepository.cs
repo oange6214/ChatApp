@@ -1,5 +1,4 @@
 ﻿using ChatApp.Core.Entities;
-using ChatApp.Core.Models;
 
 namespace ChatApp.Core.Interfaces;
 
