@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using System.Configuration;
 using System.IO;
 using System.Windows;
 
@@ -79,8 +80,12 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
+        string configConnectionString = configuration.GetConnectionString("DefaultConnection");
+        string dbPath = GetDatabasePath();
+        string actualConnectionString = configConnectionString.Replace("{DbPath}", dbPath);
+
         services.AddSingleton<IDbConnectionFactory>(sp =>
-            new DbConnectionFactory(configuration.GetConnectionString("DefaultConnection")));
+            new DbConnectionFactory(actualConnectionString));
 
         services.AddScoped<IChatRepository, ChatRepository>();
         services.AddScoped<IChatService, ChatService>();
@@ -88,5 +93,25 @@ public partial class App : Application
         services.AddSingleton(AutoMapperConfig.Initialize());
 
         services.AddSingleton<MainWindow>();
+    }
+
+    private static string GetDatabasePath()
+    {
+        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        string projectRoot = baseDir;
+
+        for (int i = 0; i < 6; i++)
+        {
+            projectRoot = Path.GetDirectoryName(projectRoot);
+        }
+
+        string dbPath = Path.Combine(projectRoot, "databases", "Database1.mdf");
+
+        if (!File.Exists(dbPath))
+        {
+            throw new FileNotFoundException($"Database file cannot be found：{dbPath}");
+        }
+
+        return dbPath;
     }
 }
