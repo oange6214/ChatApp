@@ -1,5 +1,7 @@
 
-![應用截圖](screenshots/main_interface.png)
+![App screenshots](screenshots/main_interface.png)
+
+Modified from： https://www.youtube.com/watch?v=qCoB8mqNyzk&list=PLe_Naf3_gfQl8ZDxkIQpB3-aZJ7aEPFUC
 
 # ChatApp
 
